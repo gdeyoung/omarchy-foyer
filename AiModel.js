@@ -8,11 +8,11 @@ function SYSTEM() {
 }
 
 function claims(query) {
-  return /^(?:ai|\?)\s+\S/.test(String(query || "").trim())
+  return /^(?:ai|\?)(?::\s*|\s+)\S/i.test(String(query || "").trim())
 }
 
 function terms(query) {
-  var match = /^(?:ai|\?)\s+(.*)$/.exec(String(query || "").trim())
+  var match = /^(?:ai|\?)(?::\s*|\s+)(.*)$/i.exec(String(query || "").trim())
   return match ? match[1].trim() : ""
 }
 

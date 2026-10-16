@@ -5,6 +5,8 @@ const Ai = await loadJsModule("AiModel.js")
 
 test("claims only prefixed questions", () => {
   assert.equal(Ai.claims("ai why is dns slow"), true)
+  assert.equal(Ai.claims("ai: why is dns slow"), true)
+  assert.equal(Ai.claims("AI: why is dns slow"), true)
   assert.equal(Ai.claims("? why is dns slow"), true)
   assert.equal(Ai.claims("ai"), false)
   assert.equal(Ai.claims("why is dns slow"), false)
@@ -13,6 +15,8 @@ test("claims only prefixed questions", () => {
 
 test("terms strips the prefix and keeps the question", () => {
   assert.equal(Ai.terms("ai why is dns slow"), "why is dns slow")
+  assert.equal(Ai.terms("ai: why is dns slow"), "why is dns slow")
+  assert.equal(Ai.terms("AI: spaced out"), "spaced out")
   assert.equal(Ai.terms("?  spaced out"), "spaced out")
   assert.equal(Ai.terms("nothing"), "")
 })
