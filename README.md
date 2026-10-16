@@ -1,46 +1,48 @@
-# omarunner
+# Foyer
 
-A KRunner-style launcher for Omarchy. It replaces the Omarchy
-root menu on `SUPER + SPACE`: with nothing typed it is one input line, and the
-first keystroke expands it into results grouped by kind, with the group name in
-a column on the left: applications, the whole Omarchy menu tree, session actions,
-folders, files, recent files, open windows, a calculator with unit conversion,
-and more. The first nine results launch with `Ctrl+1` to `Ctrl+9`.
+**The entrance every session starts from.** A KRunner-style launcher for
+Omarchy: it opens on `SUPER + SPACE` as the whole Omarchy menu tree — apps,
+settings, session actions, everything — with a search box on top. The caret
+sits in the box; arrows walk the menu, `Enter` selects, `Esc` backs up a
+level. The first keystroke swaps the tree for live results grouped by kind:
+applications, the whole Omarchy menu tree, session actions, folders, files,
+recent files, open windows, a calculator with unit conversion, clipboard
+history, shell commands and web search.
 
 It is a fork of the first-party `omarchy.menu` plugin, so it follows the active
 Omarchy theme with no configuration.
 
 <div align="center">
-<img src="preview.png" alt="omarunner preview" width="720">
+<img src="preview.png" alt="foyer preview" width="720">
 </div>
 
 ## Screenshots
 
 <div align="center">
 
-<img src="assets/omarunner.png" alt="Collapsed: one input line" width="640"><br>
+<img src="assets/foyer.png" alt="Collapsed: one input line" width="640"><br>
 <sub>Collapsed: one input line</sub>
 
-<img src="assets/omarunneromarchy.png" alt="Results grouped by kind, with Ctrl+number quick launch" width="640"><br>
+<img src="assets/foyeromarchy.png" alt="Results grouped by kind, with Ctrl+number quick launch" width="640"><br>
 <sub>Results grouped by kind, with Ctrl+number quick launch</sub>
 
-<img src="assets/omarunnertest.png" alt="Menu entries and files" width="640"><br>
+<img src="assets/foyertest.png" alt="Menu entries and files" width="640"><br>
 <sub>Menu entries and files</sub>
 
-<img src="assets/omarunnerapps.png" alt="The Apps list" width="640"><br>
+<img src="assets/foyerapps.png" alt="The Apps list" width="640"><br>
 <sub>The Apps list</sub>
 
-<img src="assets/omarunnercb.png" alt="Clipboard history behind the cb prefix" width="640"><br>
+<img src="assets/foyercb.png" alt="Clipboard history behind the cb prefix" width="640"><br>
 <sub>Clipboard history behind the cb prefix</sub>
 
-<img src="assets/omarunnerddgg.png" alt="Web search with dd and gg" width="640"><br>
+<img src="assets/foyerddgg.png" alt="Web search with dd and gg" width="640"><br>
 <sub>Web search with dd and gg</sub>
 
-<img src="assets/omarunnerfilter.png" alt="The Omarunner Sources page" width="640"><br>
-<sub>The Omarunner Sources page</sub>
+<img src="assets/foyerfilter.png" alt="The Foyer Sources page" width="640"><br>
+<sub>The Foyer Sources page</sub>
 
-<img src="assets/omarunnersettings.png" alt="The Omarunner Settings page" width="640"><br>
-<sub>The Omarunner Settings page</sub>
+<img src="assets/foyersettings.png" alt="The Foyer Settings page" width="640"><br>
+<sub>The Foyer Settings page</sub>
 
 </div>
 
@@ -54,16 +56,16 @@ Omarchy theme with no configuration.
 
 ## Installation
 
-omarunner is a standard Omarchy shell plugin. Add it, then run the setup step
+foyer is a standard Omarchy shell plugin. Add it, then run the setup step
 to choose its keys:
 
 ```bash
-omarchy plugin add https://github.com/gdeyoung/omarunner.git --enable
-~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup
+omarchy plugin add https://github.com/gdeyoung/foyer.git --enable
+~/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer-setup
 ```
 
 The first command clones the plugin into
-`~/.config/omarchy/plugins/gdeyoung.omarunner`, validates it and enables it. The
+`~/.config/omarchy/plugins/gdeyoung.foyer`, validates it and enables it. The
 second asks for the keys (see Keybindings below).
 
 Optional packages (the setup step names any that are missing):
@@ -80,7 +82,7 @@ sudo pacman -S libqalculate fzf
 ## Updating
 
 ```
-omarchy plugin update gdeyoung.omarunner
+omarchy plugin update gdeyoung.foyer
 ```
 
 After the update, the shell's file watcher starts a live reload of the changed
@@ -91,79 +93,79 @@ stock Omarchy as omarchy #8547). One crash dialog is cosmetic — the fresh
 instance runs the updated code:
 
 ```
-omarchy plugin update gdeyoung.omarunner --yes && sleep 3 && omarchy restart shell
+omarchy plugin update gdeyoung.foyer --yes && sleep 3 && omarchy restart shell
 ```
 
 Your keybindings survive an update. If you ever remove and re-add the plugin,
-run `omarunner-setup` or `omarunner-apply` once to regenerate them: your keys are
-kept in `~/.config/omarchy/omarunner.json`, but the generated `omarunner.lua`
+run `foyer-setup` or `foyer-apply` once to regenerate them: your keys are
+kept in `~/.config/omarchy/foyer.json`, but the generated `foyer.lua`
 lives in the plugin folder and goes with it.
 
 ## Keybindings
 
-A plugin cannot declare keys itself, so omarunner has a setup step:
+A plugin cannot declare keys itself, so foyer has a setup step:
 
 ```bash
-~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup
+~/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer-setup
 ```
 
-It asks which key opens omarunner (default `SUPER + SPACE`, which replaces
+It asks which key opens foyer (default `SUPER + SPACE`, which replaces
 Omarchy's menu key) and whether to bind a second key for the Apps list
 (`SUPER + ALT + SPACE`). It then:
 
-- saves the answers under `keys` in `~/.config/omarchy/omarunner.json`;
-- generates `omarunner.lua` in the plugin folder and adds one `pcall(dofile, …)`
+- saves the answers under `keys` in `~/.config/omarchy/foyer.json`;
+- generates `foyer.lua` in the plugin folder and adds one `pcall(dofile, …)`
   line to `~/.config/hypr/hyprland.lua` (backed up first, harmless if the plugin
   is removed), then reloads Hyprland;
-- offers to put the `omarunner` command on your PATH (a link in
-  `~/.local/bin`), so you can run `omarunner toggle` from a terminal. The keys
+- offers to put the `foyer` command on your PATH (a link in
+  `~/.local/bin`), so you can run `foyer toggle` from a terminal. The keys
   themselves do not need it.
 
-Re-run it any time, or use **Keybindings…** on the Omarunner Settings page. The
+Re-run it any time, or use **Keybindings…** on the Foyer Settings page. The
 bar's Omarchy button and `SUPER + CTRL + SPACE` keep opening the Omarchy menu.
 
-For scripts: `omarunner-setup --yes --launcher "SUPER + R" --apps none` (add
-`--no-path` to skip the PATH link), and `omarunner-apply` to regenerate the binds
-from `omarunner.json`. Both live in the plugin's `bin/` folder.
+For scripts: `foyer-setup --yes --launcher "SUPER + R" --apps none` (add
+`--no-path` to skip the PATH link), and `foyer-apply` to regenerate the binds
+from `foyer.json`. Both live in the plugin's `bin/` folder.
 
 Prefer to write the binds yourself? Add these to `~/.config/hypr/bindings.lua`
 instead, then run `hyprctl reload`:
 
 ```lua
--- omarunner replaces the Omarchy root menu on SUPER+SPACE (was: Omarchy menu).
+-- foyer replaces the Omarchy root menu on SUPER+SPACE (was: Omarchy menu).
 -- The bar's Omarchy logo button and SUPER+CTRL+SPACE (background switcher)
 -- stay on omarchy-menu.
-local omarunner = "$HOME/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner"
+local foyer = "$HOME/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer"
 hl.unbind("SUPER + SPACE")
-o.bind("SUPER + SPACE", "omarunner", omarunner .. " toggle")
+o.bind("SUPER + SPACE", "foyer", foyer .. " toggle")
 hl.unbind("SUPER + ALT + SPACE")
-o.bind("SUPER + ALT + SPACE", "omarunner apps", omarunner .. " toggle apps")
+o.bind("SUPER + ALT + SPACE", "foyer apps", foyer .. " toggle apps")
 ```
 
 ## Usage
 
-The `omarunner` command drives the plugin from a terminal or a keybinding:
+The `foyer` command drives the plugin from a terminal or a keybinding:
 
 ```
-omarunner [toggle|summon|close|refresh|ping|setup|apply] [route]
+foyer [toggle|summon|close|refresh|ping|setup|apply] [route]
 ```
 
 `toggle` is the default verb and `root` the default route. A route is a menu item
 id (`setup.power`) or an alias (`power`), the same routes `omarchy-menu` accepts,
-plus `sources` and `omarunner-settings` for omarunner's own pages. `setup` and
-`apply` run `omarunner-setup` and `omarunner-apply`.
+plus `sources` and `foyer-settings` for foyer's own pages. `setup` and
+`apply` run `foyer-setup` and `foyer-apply`.
 
 ## Uninstallation
 
 Take the keys out first, then remove the plugin:
 
 ```bash
-~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-apply --remove
-omarchy plugin remove gdeyoung.omarunner
+~/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer-apply --remove
+omarchy plugin remove gdeyoung.foyer
 ```
 
-`omarunner-apply --remove` deletes the loader line from `hyprland.lua`, the
-generated `omarunner.lua` and the PATH link, then reloads Hyprland, which
+`foyer-apply --remove` deletes the loader line from `hyprland.lua`, the
+generated `foyer.lua` and the PATH link, then reloads Hyprland, which
 restores Omarchy's own keys. If you wrote the binds by hand instead, remove those
 lines from `bindings.lua` (the `local` line, the `hl.unbind` lines and the
 `o.bind` lines) and run `hyprctl reload`.
@@ -174,8 +176,8 @@ Clone the repo and install it from the clone, as a user would, so you test what
 users get:
 
 ```bash
-git clone https://github.com/gdeyoung/omarunner.git ~/Projects/omarunner
-omarchy plugin add ~/Projects/omarunner --enable
+git clone https://github.com/gdeyoung/foyer.git ~/Projects/foyer
+omarchy plugin add ~/Projects/foyer --enable
 ```
 
 To try a change, commit it in the clone, update the installed copy from it and
@@ -183,8 +185,8 @@ restart the shell. The update pulls from the plugin's origin, which is your
 clone, so uncommitted edits do not reach the installed plugin:
 
 ```bash
-cd ~/Projects/omarunner && git commit -am "..."
-omarchy plugin update gdeyoung.omarunner
+cd ~/Projects/foyer && git commit -am "..."
+omarchy plugin update gdeyoung.foyer
 omarchy-restart-shell
 ```
 
@@ -201,7 +203,7 @@ source), `leading` (rows above the menu groups) or `fallback` (rows only when
 nothing else matched). Add the instance to `root.sources` in `Runner.qml`; the
 Sources page picks it up from there.
 
-`bin/omarunner-diff-upstream` compares the installed first-party menu plugin
+`bin/foyer-diff-upstream` compares the installed first-party menu plugin
 against the vendored baseline in `upstream/`, which is how drift after an Omarchy
 update becomes visible.
 
@@ -212,7 +214,7 @@ through the pure helpers in `AppModel.js`, and filtered by the same
 `default/omarchy/launcher.hides` list the Omarchy launcher uses. The shell's
 shared `AppLibrary` is not reachable from a third-party menu plugin, so the
 runner keeps its own source; the visible difference is that launching from
-omarunner does not raise the shell's launch OSD.
+foyer does not raise the shell's launch OSD.
 
 ## What you can type
 
@@ -262,11 +264,11 @@ Shift+click works like Shift+Enter.
 
 ## Sources and settings
 
-The **Omarunner Sources** page (filter button, `Ctrl+,`) lists every search source with a short hint and an
+The **Foyer Sources** page (filter button, `Ctrl+,`) lists every search source with a short hint and an
 **ON**/**OFF** badge at the right; Enter or a click toggles one. Applications,
 Omarchy and Session can be switched off the same way.
 
-The **Omarunner Settings** page (gear, `Ctrl+S`) holds: accent colour, border,
+The **Foyer Settings** page (gear, `Ctrl+S`) holds: accent colour, border,
 category column, corner radius, Ctrl+number hints, Favorites, font, fuzzy
 matching, hint size, position, opacity, Recent launches, row height, rows before
 scrolling, text size, the version and GitHub link, and width. On/off settings show an **ON**/**OFF** badge after their
@@ -287,7 +289,7 @@ Lower). Results grow downward from the input line.
 
 **Favorites** are results you pin with `Ctrl+P`: apps, files, folders, opened
 locations and menu entries (up to 30). While Favorites is **ON** (the default),
-they are listed under a *Favorites* heading whenever omarunner opens with nothing
+they are listed under a *Favorites* heading whenever foyer opens with nothing
 typed. Settings → Favorites lists them: Enter unpins one, and `Ctrl+Up` /
 `Ctrl+Down` reorders. Open it to switch the start-screen list **ON**/**OFF** and
 pick how many show (3, 5, 8, All or a typed number).
@@ -297,35 +299,35 @@ show) lists what you launched last, under the favorites, instead of the bare
 input line. Only apps, files, folders (including recent files) and menu actions
 are recorded: never clipboard entries, typed commands, kill, calculator or web
 searches. Apps that were uninstalled and files that no longer exist are left out
-of the list. Favorites and history live in `~/.local/state/omarunner/history.json`,
+of the list. Favorites and history live in `~/.local/state/foyer/history.json`,
 in a private directory, because it stores the commands of launched menu actions.
 
-Both pages are stored in `~/.config/omarchy/omarunner.json` (`sources`,
+Both pages are stored in `~/.config/omarchy/foyer.json` (`sources`,
 `settings`, and `webSearchUrl` for the fallback web search, DuckDuckGo by
 default). Hand edits to an existing file are picked up while the shell runs; if
 the file is first created after the shell started, restart the shell (or toggle
 something once) for edits to be watched. If the file is not valid JSON,
-omarunner uses defaults and, on the next change, copies the broken file to
-`omarunner.json.bak` before writing a fresh one.
+foyer uses defaults and, on the next change, copies the broken file to
+`foyer.json.bak` before writing a fresh one.
 
 ## Relationship to omarchy.menu
 
 The first-party `omarchy.menu` plugin stays installed and untouched. It still
 serves the Omarchy logo button in the bar, the `SUPER + CTRL + SPACE` background
 switcher, and the `omarchy-menu-select` / `omarchy-menu-input` dmenu helpers,
-which omarunner deliberately does not implement.
+which foyer deliberately does not implement.
 
 ## Credits
 
-This is **gdeyoung's fork** of [thevideinfra/omarunner](https://github.com/thevideinfra/omarunner), kept for custom tweaks.
+This is **gdeyoung's fork** of [thevideinfra/foyer](https://github.com/thevideinfra/foyer), kept for custom tweaks.
 
 **Fork behavior — Menu on start:** with nothing typed, the launcher opens with the original
 Omarchy root menu (Apps, Learn, Style, Setup, …) in the results area, under any favorites and
 recents. Arrows walk it, Enter drills into a submenu, and the first keystroke swaps the whole
 list for the live all-source search, KRunner-style. Toggle it with **Menu on start** on the
-Omarunner Settings page; turning it off restores upstream's bare input line.
+Foyer Settings page; turning it off restores upstream's bare input line.
 
-omarunner is a fork of the `omarchy.menu` plugin from
+foyer is a fork of the `omarchy.menu` plugin from
 [Omarchy](https://github.com/omacom/omarchy) by David Heinemeier Hansson, and
 would not exist without it. `Runner.qml` and `RunnerModel.js` descend from
 Omarchy's `Menu.qml` and `MenuModel.js`, and `upstream/` keeps the unmodified

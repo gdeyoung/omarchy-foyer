@@ -1,4 +1,4 @@
-// Launcher settings: stored under "settings" in omarunner.json, shown on the
+// Launcher settings: stored under "settings" in foyer.json, shown on the
 // in-launcher Settings page as preset choices and on/off toggles.
 function CHOICES() {
   return [
@@ -40,7 +40,7 @@ function CHOICES() {
 // fontFamily takes any font name instead.
 // The Settings page's menu id. Not "settings": Omarchy's Setup menu answers to
 // that alias, and an exact id would shadow it.
-function PAGE_ID() { return "omarunner-settings" }
+function PAGE_ID() { return "foyer-settings" }
 
 function RANGES() {
   return { width: [300, 1600], rows: [3, 20], density: [18, 48], fontScale: [50, 200], hintScale: [50, 200], border: [0, 10],
@@ -167,7 +167,7 @@ function keyForMenu(menu) {
   return id
 }
 
-// While typing on "omarunner-settings.<key>", the typed value as a pickable row, in the
+// While typing on "foyer-settings.<key>", the typed value as a pickable row, in the
 // display-row shape buildRows produces.
 function customDisplayRow(activeMenu, text) {
   var menu = String(activeMenu || "")
@@ -290,7 +290,7 @@ function pageRows(settingsIn, setupCommand, favorites) {
   entries.push(switchedEntry("Recent launches", "launches", "recentsOn", []))
   if (setupCommand) {
     entries.push({ name: "Keybindings", rows: [{ id: PAGE_ID() + ".keys", parent: PAGE_ID(), kind: "action", icon: "",
-      iconFont: "", label: "Keybindings…", title: "", target: "", description: "Choose the keys that open omarunner",
+      iconFont: "", label: "Keybindings…", title: "", target: "", description: "Choose the keys that open foyer",
       action: setupCommand, provider: "", aliases: [], when: "", checked: "", value: "", order: 0 }] })
   }
   entries.sort(function(a, b) { return a.name.localeCompare(b.name) })

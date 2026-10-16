@@ -1,5 +1,5 @@
 // Launch history and Favorites: what was launched, what is pinned, and the rows
-// shown for them when omarunner opens with nothing typed.
+// shown for them when foyer opens with nothing typed.
 //
 // An entry is a flat copy of the display row that was launched or pinned, plus
 // a stable key, so it can be shown and activated again without a search.
@@ -11,7 +11,7 @@ function PINNABLE_SOURCES() { return ["files", "folders", "recent", "locations"]
 
 function isOwnPage(itemId) {
   var id = String(itemId || "")
-  return id === "sources" || id.indexOf("sources.") === 0 || id.indexOf("omarunner-settings") === 0
+  return id === "sources" || id.indexOf("sources.") === 0 || id.indexOf("foyer-settings") === 0
 }
 
 // Rows that count as a launch.

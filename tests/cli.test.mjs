@@ -8,7 +8,7 @@ import { promisify } from "node:util"
 
 const run = promisify(execFile)
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
-const cli = join(root, "bin", "omarunner")
+const cli = join(root, "bin", "foyer")
 
 // A stub omarchy-shell earlier on PATH records its arguments instead of
 // talking to the running shell.
@@ -20,22 +20,22 @@ async function cliRun(args) {
 
 test("toggle with no route defaults to root", async () => {
   const { stdout } = await cliRun(["toggle"])
-  assert.equal(stdout.trim(), 'shell toggle gdeyoung.omarunner {"menu":"root"}')
+  assert.equal(stdout.trim(), 'shell toggle gdeyoung.foyer {"menu":"root"}')
 })
 
 test("no verb at all defaults to toggle root", async () => {
   const { stdout } = await cliRun([])
-  assert.equal(stdout.trim(), 'shell toggle gdeyoung.omarunner {"menu":"root"}')
+  assert.equal(stdout.trim(), 'shell toggle gdeyoung.foyer {"menu":"root"}')
 })
 
 test("summon passes the route through", async () => {
   const { stdout } = await cliRun(["summon", "apps"])
-  assert.equal(stdout.trim(), 'shell summon gdeyoung.omarunner {"menu":"apps"}')
+  assert.equal(stdout.trim(), 'shell summon gdeyoung.foyer {"menu":"apps"}')
 })
 
 test("close needs no payload", async () => {
   const { stdout } = await cliRun(["close"])
-  assert.equal(stdout.trim(), "shell hide gdeyoung.omarunner")
+  assert.equal(stdout.trim(), "shell hide gdeyoung.foyer")
 })
 
 test("an unknown verb exits 2", async () => {
@@ -45,5 +45,5 @@ test("an unknown verb exits 2", async () => {
 test("the CLI and the manifest agree on the plugin id", async () => {
   const manifest = JSON.parse(await readFile(join(root, "manifest.json"), "utf8"))
   const script = await readFile(cli, "utf8")
-  assert.ok(script.includes(manifest.id), "bin/omarunner does not mention the manifest id")
+  assert.ok(script.includes(manifest.id), "bin/foyer does not mention the manifest id")
 })

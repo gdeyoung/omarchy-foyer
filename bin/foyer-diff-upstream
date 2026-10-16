@@ -9,16 +9,16 @@ MENU_DIR="/usr/share/omarchy/shell/plugins/menu"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --menu-dir)
-      [[ $# -ge 2 ]] || { echo "omarunner-diff-upstream: --menu-dir requires a value" >&2; exit 2; }
+      [[ $# -ge 2 ]] || { echo "foyer-diff-upstream: --menu-dir requires a value" >&2; exit 2; }
       MENU_DIR="$2"
       shift 2
       ;;
     -h | --help)
-      echo "Usage: omarunner-diff-upstream [--menu-dir DIR]"
+      echo "Usage: foyer-diff-upstream [--menu-dir DIR]"
       exit 0
       ;;
     *)
-      echo "omarunner-diff-upstream: unknown argument '$1'" >&2
+      echo "foyer-diff-upstream: unknown argument '$1'" >&2
       exit 2
       ;;
   esac

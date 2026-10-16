@@ -9,7 +9,7 @@ const qml = await readFile(join(root, "Runner.qml"), "utf8")
 const manifest = JSON.parse(await readFile(join(root, "manifest.json"), "utf8"))
 
 test("manifest declares the runner plugin", () => {
-  assert.equal(manifest.id, "gdeyoung.omarunner")
+  assert.equal(manifest.id, "gdeyoung.foyer")
   assert.deepEqual(manifest.kinds, ["menu"])
   assert.equal(manifest.entryPoints.menu, "Runner.qml")
 })
@@ -130,7 +130,7 @@ test("the guard script excludes source-toggle rows from bash evaluation", () => 
   assert.ok(qml.includes("!RunnerModel.isConfigRow(gentry)"))
 })
 
-// -- KRunner/COSMIC layout (spec 2026-09-24-omarunner-krunner-layout-design).
+// -- KRunner/COSMIC layout (spec 2026-09-24-foyer-krunner-layout-design).
 
 test("the card width is fixed on every route", () => {
   assert.match(qml, /property int cardWidth: Math\.min\(Style\.space\(root\.settings\.width\)/)
@@ -272,7 +272,7 @@ test("category captions, details and Ctrl+N hints use the Hint size setting", ()
 test("a second press of either page button closes its page", () => {
   assert.ok(qml.includes('if (root.inPage(page)) { root.closePage(page); return }'))
   assert.ok(qml.includes('return root.activeMenu === page || root.activeMenu.indexOf(page + ".") === 0'))
-  assert.ok(qml.includes('root.closePage(page === "sources" ? "omarunner-settings" : "sources")'))
+  assert.ok(qml.includes('root.closePage(page === "sources" ? "foyer-settings" : "sources")'))
 })
 
 test("typing on a setting's page offers the typed value", () => {
@@ -316,9 +316,9 @@ test("the typed Use row follows the matching presets; Custom… applies a typed 
   assert.ok(qml.includes("var typedValue = SettingsModel.customDisplayRow(root.activeMenu, root.filterText)"))
 })
 
-test("the Settings and Sources pages are labelled as omarunner's own", () => {
-  assert.ok(qml.includes('label: "Omarunner Settings",\n      title: "Omarunner Settings"'))
-  assert.ok(qml.includes('label: "Omarunner Sources",\n      title: "Omarunner Sources"'))
+test("the Settings and Sources pages are labelled as foyer's own", () => {
+  assert.ok(qml.includes('label: "Foyer Settings",\n      title: "Foyer Settings"'))
+  assert.ok(qml.includes('label: "Foyer Sources",\n      title: "Foyer Sources"'))
 })
 
 test("Sources and Settings rows show ON/OFF badges and radio dots, driven by checkedResults", () => {
@@ -348,7 +348,7 @@ test("edge padding is tight: card inset 4, row insets 4 left and 6 right", () =>
 
 test("the Settings page passes the keybinding wizard command to its Keybindings… row", () => {
   assert.ok(qml.includes("omarchy-launch-floating-terminal-with-presentation \" + Util.shellQuote(setup)"))
-  assert.ok(qml.includes("gdeyoung.omarunner/bin/omarunner-setup"))
+  assert.ok(qml.includes("gdeyoung.foyer/bin/foyer-setup"))
 })
 
 test("recent files are checked for existence before they are offered", async () => {
@@ -383,7 +383,7 @@ test("the accent colour comes from the Accent setting and colours the highlights
 test("the version pill and GitHub icon sit in the header beside the gear, on the Settings page only", () => {
   assert.ok(qml.includes("id: aboutBox"))
   assert.ok(qml.includes('visible: root.settings.about && root.version !== "" && gearButton.active'))
-  assert.ok(qml.includes("https://github.com/gdeyoung/omarunner"))
+  assert.ok(qml.includes("https://github.com/gdeyoung/foyer"))
   assert.ok(qml.includes("anchors.right: aboutBox.visible ? aboutBox.left : gearButton.left"))
   assert.ok(qml.includes("root.fileVersion || String(root.manifest && root.manifest.version"))
   assert.ok(qml.includes('Qt.resolvedUrl("manifest.json")'))
@@ -392,7 +392,7 @@ test("the version pill and GitHub icon sit in the header beside the gear, on the
 
 test("choosing Custom… switches the page into a typing mode that shows it", () => {
   assert.ok(qml.includes("property bool customEditing: false"))
-  assert.ok(qml.includes('readonly property bool editingCustom: root.customEditing && root.activeMenu.indexOf("omarunner-settings.") === 0'))
+  assert.ok(qml.includes('readonly property bool editingCustom: root.customEditing && root.activeMenu.indexOf("foyer-settings.") === 0'))
   // Selecting the row turns it on; leaving the page or closing turns it off.
   assert.match(qml, /row\.kind === "setting-custom"[\s\S]*?root\.customEditing = true/)
   assert.match(qml, /function setActiveMenu[\s\S]*?root\.customEditing = false/)
@@ -406,7 +406,7 @@ test("choosing Custom… switches the page into a typing mode that shows it", ()
 })
 
 test("the Sources and Settings pages show chevrons where the list scrolls", () => {
-  assert.ok(qml.includes('readonly property bool pageScrollHints: root.inPage("sources") || root.inPage("omarunner-settings")'))
+  assert.ok(qml.includes('readonly property bool pageScrollHints: root.inPage("sources") || root.inPage("foyer-settings")'))
   assert.ok(qml.includes("id: scrollUpChevron"))
   assert.ok(qml.includes("id: scrollDownChevron"))
   assert.equal((qml.match(/visible: root\.pageScrollHints/g) || []).length, 2)

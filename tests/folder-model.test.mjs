@@ -7,7 +7,7 @@ const HOME = "/home/ks"
 const LIST = `/home/ks/Documents/
 /home/ks/Downloads/
 /home/ks/Projects/
-/home/ks/Projects/omarunner/
+/home/ks/Projects/foyer/
 /home/ks/Documents/Docs archive/
 /home/ks/.config/hypr/
 /etc
@@ -52,8 +52,8 @@ test("exact beats prefix beats typo, then shallower paths", () => {
   assert.equal(F.matchTier("Documents", "docu"), 1)
   assert.equal(F.matchTier("Documents", "docmuents"), 2)
   assert.equal(F.matchTier("Docs archive", "arch"), 3)
-  assert.equal(F.matchTier("omarunner", "omrnr", true), 4)
-  assert.equal(F.matchTier("omarunner", "omrnr", false), -1)
+  assert.equal(F.matchTier("foyer", "fyr", true), 4)
+  assert.equal(F.matchTier("foyer", "fyr", false), -1)
   assert.equal(F.matchTier("Documents", "d"), -1)
 })
 
@@ -76,7 +76,7 @@ test("rows show the path under ~ and open or start a terminal there", () => {
 
 test("fuzzy folder hits keep the letters close", () => {
   assert.equal(F.matchTier("chromium-headless", "code", true), -1)
-  assert.equal(F.matchTier("omarunner", "omrnr", true), 4)
+  assert.equal(F.matchTier("foyer", "fyr", true), 4)
 })
 
 test("~/.config itself is a candidate, not only its subfolders", () => {

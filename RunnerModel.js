@@ -587,7 +587,7 @@ if (typeof module !== "undefined") {
 
 // Rows the runner shows for a given menu and query. Lifted out of the QML so
 // the collapse rule is testable: at the root with no query the runner is a
-// bare input line, which is the whole point of omarunner. Inside a submenu an
+// bare input line, which is the whole point of foyer. Inside a submenu an
 // empty query still lists that submenu's children, because drill-down (Style >
 // Theme, Apps > ...) has to keep working.
 // KRunner session words for the System submenu, so "restart" finds Reboot.
@@ -682,7 +682,7 @@ function buildRows(items, itemOrder, whenResults, checkedResults, activeMenu, qu
     if (isConfigRow(entry) && entry.parent !== active) continue
     // Settings submenus ("Font · Omarchy default") stay off the root search;
     // any other page already drops them as non-descendants below.
-    if (active === "root" && String(entry.id).indexOf("omarunner-settings.") === 0) continue
+    if (active === "root" && String(entry.id).indexOf("foyer-settings.") === 0) continue
     if (!isDescendantOf(items, entry.id, active)) continue
     if (!matchesQuery(entry, trimmed, isVisible(items, itemOrder, whenResults, entry), fuzzy)) continue
 

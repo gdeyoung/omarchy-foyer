@@ -308,7 +308,7 @@ test("recent claims its keyword and lists the newest entries first", () => {
 
 test("the recent existence check runs for real and keeps only existing paths", async () => {
   const { execFileSync } = await import("node:child_process")
-  const check = R.existsCheck(["/etc/hostname", "/no/such/file-omarunner", "/etc"])
+  const check = R.existsCheck(["/etc/hostname", "/no/such/file-foyer", "/etc"])
   const out = execFileSync(check.args[0], check.args.slice(1), { input: check.input }).toString()
   assert.equal(out, "/etc/hostname\n/etc\n")
 })

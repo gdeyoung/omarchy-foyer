@@ -1,4 +1,4 @@
-// The omarunner.json config and the Sources page rows. Sources themselves are
+// The foyer.json config and the Sources page rows. Sources themselves are
 // registered in Runner.qml (root.sources); nothing here names one, so a source
 // absent from the config is enabled and only an explicit false disables it.
 function defaultConfig() {

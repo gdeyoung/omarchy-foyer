@@ -22,7 +22,7 @@ Item {
   readonly property string version: root.fileVersion || String(root.manifest && root.manifest.version || "")
 
   // Plugin lifecycle hooks. The host calls open(payloadJson) after
-  // `omarchy-shell shell summon gdeyoung.omarunner ...` and close() when hidden.
+  // `omarchy-shell shell summon gdeyoung.foyer ...` and close() when hidden.
   property string pendingInitialMenu: "root"
 
   function open(payloadJson) {
@@ -47,11 +47,11 @@ Item {
   function ping() { return "ok" }
 
   property string fontFamily: Style.font.menuFamily
-  // Settings page choices (omarunner.json "settings"), merged over defaults.
+  // Settings page choices (foyer.json "settings"), merged over defaults.
   readonly property var settings: SettingsModel.resolve(sourceConfig.config)
   // Text uses the chosen family; icon glyphs stay on the Nerd Font menu family.
   readonly property string textFamily: root.settings.fontFamily || root.fontFamily
-  // omarunner draws its text smaller than the shell's type scale. Scaling
+  // foyer draws its text smaller than the shell's type scale. Scaling
   // here keeps the system font settings untouched.
   property real fontScale: root.settings.fontScale / 100
   function scaledFont(px) { return Math.max(1, Math.round(px * root.fontScale)) }
@@ -84,8 +84,8 @@ Item {
   property bool customEditing: false
   // Chevrons at the list's edges on the Sources and Settings pages, so a short
   // list there is known to scroll.
-  readonly property bool pageScrollHints: root.inPage("sources") || root.inPage("omarunner-settings")
-  readonly property bool editingCustom: root.customEditing && root.activeMenu.indexOf("omarunner-settings.") === 0
+  readonly property bool pageScrollHints: root.inPage("sources") || root.inPage("foyer-settings")
+  readonly property bool editingCustom: root.customEditing && root.activeMenu.indexOf("foyer-settings.") === 0
   property var items: ({})
   property var itemOrder: []
   property var navStack: []
@@ -145,7 +145,7 @@ Item {
   property var sourceRows: ({})
   property int searchSerial: 0
   property var sectionLabels: ({})
-  // At the root with no query omarunner is a bare input line: no row area, and
+  // At the root with no query foyer is a bare input line: no row area, and
   // no spacing under the header to hint at one.
   // With Favorites pinned or Recent launches on, the empty root lists them
   // instead (startRowCount, set by rebuildDisplay).
@@ -739,12 +739,12 @@ Item {
     var order = []
     for (var i = 0; i < root.itemOrder.length; i++) {
       var id = root.itemOrder[i]
-      if (id === "sources" || id.indexOf("sources.") === 0 || id === "omarunner-settings" || id.indexOf("omarunner-settings.") === 0) continue
+      if (id === "sources" || id.indexOf("sources.") === 0 || id === "foyer-settings" || id.indexOf("foyer-settings.") === 0) continue
       items[id] = root.items[id]
       order.push(id)
     }
-    items["sources"] = { id: "sources", parent: "root", kind: "menu", icon: "󰍉", iconFont: "", label: "Omarunner Sources",
-      title: "Omarunner Sources", target: "", description: "Choose what omarunner searches", action: "", provider: "",
+    items["sources"] = { id: "sources", parent: "root", kind: "menu", icon: "󰍉", iconFont: "", label: "Foyer Sources",
+      title: "Foyer Sources", target: "", description: "Choose what foyer searches", action: "", provider: "",
       aliases: ["search sources", "runner"], when: "", checked: "", order: order.length }
     order.push("sources")
     // Applications and Omarchy are built into buildRows, not registered
@@ -764,16 +764,16 @@ Item {
       checked[rows[r].id] = sourceConfig.isEnabled(rows[r].value)
     }
     // The Settings page: preset submenus and toggles, ✓ from the config.
-    // Labelled as omarunner's own, so a search for "settings" does not read
+    // Labelled as foyer's own, so a search for "settings" does not read
     // as the system settings (Omarchy's Setup, which ranks first).
-    items["omarunner-settings"] = { id: "omarunner-settings", parent: "root", kind: "menu", icon: "\uf013", iconFont: "", label: "Omarunner Settings",
-      title: "Omarunner Settings", target: "", description: "Launcher size, font, look and matching", action: "", provider: "",
+    items["foyer-settings"] = { id: "foyer-settings", parent: "root", kind: "menu", icon: "\uf013", iconFont: "", label: "Foyer Settings",
+      title: "Foyer Settings", target: "", description: "Launcher size, font, look and matching", action: "", provider: "",
       aliases: ["launcher settings", "runner settings"], when: "", checked: "", order: order.length }
-    order.push("omarunner-settings")
+    order.push("foyer-settings")
     // Resolved here, not via root.settings: this runs from onConfigChanged at
     // startup, before that binding has a value.
     // "Keybindings…" opens the setup wizard in a floating terminal.
-    var setup = Quickshell.env("HOME") + "/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup"
+    var setup = Quickshell.env("HOME") + "/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer-setup"
     var page = SettingsModel.pageRows(SettingsModel.resolve(sourceConfig.config),
       "omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(setup), historyStore.favorites)
     for (var p = 0; p < page.rows.length; p++) {
@@ -827,11 +827,11 @@ Item {
 
   function togglePage(page) {
     if (root.inPage(page)) { root.closePage(page); return }
-    root.closePage(page === "sources" ? "omarunner-settings" : "sources")
+    root.closePage(page === "sources" ? "foyer-settings" : "sources")
     root.setActiveMenu(page, true, false)
   }
 
-  function toggleSettingsPage() { root.togglePage("omarunner-settings") }
+  function toggleSettingsPage() { root.togglePage("foyer-settings") }
 
   function toggleSourcesPage() { root.togglePage("sources") }
 
@@ -1068,7 +1068,7 @@ Item {
   // ----------------------------------------------------------- route surface
   //
   // The menu is opened through the standard plugin lifecycle:
-  // `omarchy-shell shell summon gdeyoung.omarunner '{"menu":"system"}'`.
+  // `omarchy-shell shell summon gdeyoung.foyer '{"menu":"system"}'`.
   // Callers may pass a real id (`system`, `setup.power`) or an alias declared
   // in JSONC (`power`, `reminder-set`). Unknown strings fall through to the
   // id-as-route behavior so misspellings still attempt to open the literal id.
@@ -1355,7 +1355,7 @@ Item {
             root.togglePinSelected()
             event.accepted = true
           } else if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_Up || event.key === Qt.Key_Down)
-                     && root.activeMenu === "omarunner-settings.favorites") {
+                     && root.activeMenu === "foyer-settings.favorites") {
             root.moveSelectedFavorite(event.key === Qt.Key_Up ? -1 : 1)
             event.accepted = true
           } else if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_S) {
@@ -1531,7 +1531,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/gdeyoung/omarunner"))
+                onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/gdeyoung/foyer"))
               }
             }
           }
@@ -1539,7 +1539,7 @@ Item {
           // Settings gear: size, font, look and fuzzy matching.
           Rectangle {
             id: gearButton
-            readonly property bool active: root.activeMenu === "omarunner-settings" || root.activeMenu.indexOf("omarunner-settings.") === 0
+            readonly property bool active: root.activeMenu === "foyer-settings" || root.activeMenu.indexOf("foyer-settings.") === 0
             width: root.headerHeight
             height: root.headerHeight
             radius: root.cornerRadius
@@ -1647,7 +1647,7 @@ Item {
               readonly property bool hasCursor: root.cursorActive && row.index === root.selectedIndex
               readonly property bool isApp: row.kind === "app"
               // Settings submenus with their own on/off (Favorites, Recent launches).
-              readonly property bool isSwitchedMenu: row.kind === "menu" && row.itemId.indexOf("omarunner-settings.") === 0
+              readonly property bool isSwitchedMenu: row.kind === "menu" && row.itemId.indexOf("foyer-settings.") === 0
                 && root.checkedResults[row.itemId] !== undefined
               // Pinned results carry a star in a search; the start list has its own heading.
               readonly property bool pinned: root.activeMenu === "root" && row.section.indexOf("start:") !== 0

@@ -5,8 +5,8 @@ const W = await loadJsModule("WindowModel.js")
 const Web = await loadJsModule("WebModel.js")
 
 const CLIENTS = JSON.stringify([
-  { address: "0xaa", class: "brave-origin", title: "GitHub - omarunner", workspace: { id: 2, name: "2" }, focusHistoryID: 1, mapped: true },
-  { address: "0xbb", class: "foot", title: "nvim Runner.qml", workspace: { id: 1, name: "1" }, focusHistoryID: 0, mapped: true },
+  { address: "0xaa", class: "brave-origin", title: "GitHub - foyer", workspace: { id: 2, name: "2" }, focusHistoryID: 1, mapped: true },
+  { address: "0xbb", class: "foot", title: "nvim foyer.qml", workspace: { id: 1, name: "1" }, focusHistoryID: 0, mapped: true },
   { address: "0xcc", class: "foot", title: "htop", workspace: { id: 3, name: "3" }, focusHistoryID: 2, mapped: true },
   { address: "bad; rm", class: "x", title: "x", mapped: true },
   { address: "0xdd", class: "hidden", title: "unmapped", mapped: false }
@@ -17,15 +17,15 @@ const CLIENTS = JSON.stringify([
 test("parseClients keeps mapped windows with valid addresses", () => {
   const wins = W.parseClients(CLIENTS)
   assert.deepEqual(wins.map(w => w.address), ["0xaa", "0xbb", "0xcc"])
-  assert.deepEqual(wins[0], { address: "0xaa", appClass: "brave-origin", title: "GitHub - omarunner", workspace: "2", recency: 1 })
+  assert.deepEqual(wins[0], { address: "0xaa", appClass: "brave-origin", title: "GitHub - foyer", workspace: "2", recency: 1 })
   assert.deepEqual(W.parseClients("nope"), [])
 })
 
 test("matches search class and title, prefix hits then most recent", () => {
   const wins = W.parseClients(CLIENTS)
   assert.deepEqual(W.matches(wins, "foot").map(w => w.address), ["0xbb", "0xcc"])
-  assert.deepEqual(W.matches(wins, "omarunner").map(w => w.address), ["0xaa"])
-  assert.deepEqual(W.matches(wins, "runner").map(w => w.address), ["0xbb", "0xaa"])
+  assert.deepEqual(W.matches(wins, "github").map(w => w.address), ["0xaa"])
+  assert.deepEqual(W.matches(wins, "foyer").map(w => w.address), ["0xbb", "0xaa"])
   assert.deepEqual(W.matches(wins, "h"), [])
 })
 

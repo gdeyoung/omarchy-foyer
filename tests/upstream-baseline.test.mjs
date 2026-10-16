@@ -9,7 +9,7 @@ import { promisify } from "node:util"
 
 const run = promisify(execFile)
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
-const script = join(root, "bin", "omarunner-diff-upstream")
+const script = join(root, "bin", "foyer-diff-upstream")
 
 async function diff(menuDir) {
   try {
@@ -26,7 +26,7 @@ test("reports no drift against the vendored baseline itself", async () => {
 })
 
 test("reports drift when a vendored file differs", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "omarunner-"))
+  const dir = await mkdtemp(join(tmpdir(), "foyer-"))
   await copyFile(join(root, "upstream", "Menu.qml"), join(dir, "Menu.qml"))
   await writeFile(join(dir, "MenuModel.js"), "// changed\n")
   const result = await diff(dir)
@@ -35,7 +35,7 @@ test("reports drift when a vendored file differs", async () => {
 })
 
 test("reports a missing file distinctly", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "omarunner-"))
+  const dir = await mkdtemp(join(tmpdir(), "foyer-"))
   const result = await diff(dir)
   assert.equal(result.code, 2)
 })

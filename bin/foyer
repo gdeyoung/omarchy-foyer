@@ -4,7 +4,7 @@
 # passed to the plugin as a JSON payload.
 set -euo pipefail
 
-PLUGIN_ID="gdeyoung.omarunner"
+PLUGIN_ID="gdeyoung.foyer"
 
 verb="${1-toggle}"
 route="${2-root}"
@@ -24,27 +24,27 @@ case "$verb" in
     exec omarchy-shell shell hide "$PLUGIN_ID"
     ;;
   setup)
-    exec "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/omarunner-setup" "${@:2}"
+    exec "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/foyer-setup" "${@:2}"
     ;;
   apply)
-    exec "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/omarunner-apply" "${@:2}"
+    exec "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/foyer-apply" "${@:2}"
     ;;
   refresh | ping)
     exec omarchy-shell shell call "$PLUGIN_ID" "$verb" "{}"
     ;;
   -h | --help | help)
     cat <<USAGE
-Usage: omarunner [verb] [route]
+Usage: foyer [verb] [route]
 
 Verbs:
-  toggle [route]   Open omarunner at <route>, or close it if already open. Default verb.
-  summon [route]   Always open omarunner (no close-if-visible toggle).
-  close            Close omarunner if it is visible.
+  toggle [route]   Open foyer at <route>, or close it if already open. Default verb.
+  summon [route]   Always open foyer (no close-if-visible toggle).
+  close            Close foyer if it is visible.
   refresh          Re-parse the menu JSONC files.
   ping             Health check.
-  setup            Choose the keys that open omarunner and write the Hyprland
-                   binds (interactive; see omarunner-setup --help).
-  apply [--remove] Re-write the binds from omarunner.json, or take them out.
+  setup            Choose the keys that open foyer and write the Hyprland
+                   binds (interactive; see foyer-setup --help).
+  apply [--remove] Re-write the binds from foyer.json, or take them out.
 
 Route is an item id (e.g. setup.power) or alias (e.g. power). Defaults to
 "root", which opens the bare search line.
@@ -52,7 +52,7 @@ USAGE
     exit 0
     ;;
   *)
-    echo "omarunner: unknown verb '$verb'. Try 'omarunner --help'." >&2
+    echo "foyer: unknown verb '$verb'. Try 'foyer --help'." >&2
     exit 2
     ;;
 esac

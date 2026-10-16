@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell.Io
 import qs.Commons
 
-// The colour omarunner highlights with. By default the theme's own accent; or
+// The colour foyer highlights with. By default the theme's own accent; or
 // one of the other colours in the current theme's palette (blue, cyan, green,
 // ...), read from the theme's colors.toml, or a typed #rrggbb. A palette choice
 // is stored by name, so it follows a theme change, and falls back to the

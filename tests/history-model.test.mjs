@@ -19,7 +19,7 @@ test("only apps, files, folders, recent files and menu actions are recorded", ()
   for (const sourceId of ["clipboard", "command", "kill", "calc", "web", "windows", "locations"]) {
     assert.equal(H.recordable({ ...file, sourceId }), false, sourceId)
   }
-  assert.equal(H.recordable({ ...menu, itemId: "omarunner-settings.keys" }), false)
+  assert.equal(H.recordable({ ...menu, itemId: "foyer-settings.keys" }), false)
   assert.equal(H.recordable({ ...menu, action: "" }), false)
   assert.equal(H.recordable({ kind: "setting-toggle", itemId: "x" }), false)
   assert.equal(H.recordable(null), false)
@@ -28,7 +28,7 @@ test("only apps, files, folders, recent files and menu actions are recorded", ()
 test("pinnable adds opened locations and submenus, never the settings pages", () => {
   assert.equal(H.pinnable({ ...file, sourceId: "locations" }), true)
   assert.equal(H.pinnable({ itemId: "style", kind: "menu", target: "style", label: "Style" }), true)
-  assert.equal(H.pinnable({ itemId: "omarunner-settings", kind: "menu", label: "x" }), false)
+  assert.equal(H.pinnable({ itemId: "foyer-settings", kind: "menu", label: "x" }), false)
   assert.equal(H.pinnable({ ...file, sourceId: "clipboard" }), false)
 })
 
@@ -144,8 +144,8 @@ test("entries whose app is gone or path is missing are left out of the start scr
 
 test("the missing-path check takes paths on stdin and reports only the gone ones", async () => {
   const { execFileSync } = await import("node:child_process")
-  const check = H.missingCheck(["/etc/hostname", "/no/such/file-omarunner", "/etc"])
+  const check = H.missingCheck(["/etc/hostname", "/no/such/file-foyer", "/etc"])
   assert.ok(!check.args.join(" ").includes("/etc/hostname"))
   const out = execFileSync(check.args[0], check.args.slice(1), { input: check.input }).toString()
-  assert.equal(out, "/no/such/file-omarunner\n")
+  assert.equal(out, "/no/such/file-foyer\n")
 })

@@ -3,8 +3,8 @@ import Quickshell.Io
 import QtQuick
 import "HistoryModel.js" as HistoryModel
 
-// Launch history and Favorites, kept in ~/.local/state/omarunner/history.json
-// (state, not config: it changes on every launch, and omarunner.json is meant
+// Launch history and Favorites, kept in ~/.local/state/foyer/history.json
+// (state, not config: it changes on every launch, and foyer.json is meant
 // to be hand-edited). The directory is private (700): the file holds the
 // commands of launched menu actions.
 //
@@ -13,7 +13,7 @@ import "HistoryModel.js" as HistoryModel
 // but does not parse is copied to history.json.bak before the first write.
 Item {
   id: root
-  property string dir: Quickshell.env("HOME") + "/.local/state/omarunner"
+  property string dir: Quickshell.env("HOME") + "/.local/state/foyer"
   property string path: root.dir + "/history.json"
   property var history: []
   property var favorites: []
@@ -41,7 +41,7 @@ Item {
       try { data = JSON.parse(text) } catch (e) { data = ({}); root.corrupt = true }
       if (!data || typeof data !== "object" || Array.isArray(data)) { data = ({}); root.corrupt = true }
     }
-    if (root.corrupt) console.warn("omarunner: " + root.path + " is not valid JSON; it will be backed up before the next write")
+    if (root.corrupt) console.warn("foyer: " + root.path + " is not valid JSON; it will be backed up before the next write")
     root.history = root.merged(root.history, data.history, root.maxHistory)
     root.favorites = root.merged(root.favorites, data.favorites, 30)
     root.loaded = true
@@ -130,7 +130,7 @@ Item {
     id: mkdir
     command: ["sh", "-c", "mkdir -p -- \"$1\" && chmod 700 -- \"$1\"", "sh", root.dir]
     onExited: function(exitCode) {
-      if (exitCode !== 0) { console.warn("omarunner: could not create " + root.dir + "; history is not saved"); return }
+      if (exitCode !== 0) { console.warn("foyer: could not create " + root.dir + "; history is not saved"); return }
       root.made = true
       root.flush()
     }
@@ -139,7 +139,7 @@ Item {
   Process {
     id: backup
     onExited: function(exitCode) {
-      if (exitCode !== 0) console.warn("omarunner: could not back up " + root.path + "; overwriting it anyway")
+      if (exitCode !== 0) console.warn("foyer: could not back up " + root.path + "; overwriting it anyway")
       root.backedUp = true
       root.flush()
     }
