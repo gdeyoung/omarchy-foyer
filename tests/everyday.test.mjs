@@ -207,4 +207,13 @@ test("the runner wires every new source and page", async () => {
   assert.ok(qml.includes('row.kind === "handoff-item"'), "Enter removes a handoff")
   assert.ok(qml.includes("function typedRowFor("), "typed add rows")
   assert.ok(qml.includes("function applyListOption("), "list apply routing")
+  // Every FileView/Process user imports Quickshell.Io — a missing import
+  // takes the whole plugin down at load (caught live 2026-10-16).
+  const { readFile: readSrc } = await import("node:fs/promises")
+  for (const f of ["SshSource.qml", "AiSource.qml", "TimerSource.qml", "DateTimeSource.qml", "LatestProcess.qml"]) {
+    const src = await readSrc(new URL("../" + f, import.meta.url), "utf8")
+    if (/\bFileView|\bProcess\s*\{/.test(src)) {
+      assert.ok(src.includes("import Quickshell.Io"), f + " imports Quickshell.Io for FileView/Process")
+    }
+  }
 })
