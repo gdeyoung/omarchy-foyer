@@ -83,6 +83,7 @@ Item {
   property string filterText: ""
   property int selectedIndex: 0
   property bool cursorActive: false
+  property bool voxtypePresent: false
   // Set once the Custom… row of a setting is chosen: the page then asks for
   // the value (header prompt, caret, an input box on the row).
   property bool customEditing: false
@@ -1297,6 +1298,21 @@ Item {
     }
   }
 
+  Process {
+    id: micToggle
+    command: ["voxtype", "record", "toggle"]
+  }
+
+  // One-shot probe at load: the mic button only appears when the CLI exists.
+  Process {
+    id: voxtypeProbe
+    command: ["sh", "-c", "command -v voxtype"]
+    running: true
+    stdout: SplitParser {
+      onRead: function(data) { if (data.trim() !== "") root.voxtypePresent = true }
+    }
+  }
+
   PointerMoveGate {
     id: pointerGate
     referenceItem: card
@@ -1613,6 +1629,38 @@ Item {
           radius: root.cornerRadius
           color: "transparent"
 
+          // Back arrow: a mouse-first way out of Settings, Help, Handoffs,
+          // Snippets and submenus — the same step Esc and Backspace take.
+          // The slot is always laid out so nothing shifts when it appears.
+          Rectangle {
+            id: backButton
+            readonly property bool active: root.activeMenu !== "root"
+            width: root.headerHeight
+            height: root.headerHeight
+            radius: root.cornerRadius
+            color: backMouse.containsMouse ? Util.alpha(root.foreground, 0.08) : "transparent"
+
+            Text {
+              anchors.centerIn: parent
+              textFormat: Text.PlainText
+              text: "\uf060"
+              color: root.foreground
+              // Faded to nothing on the root page, where there is nowhere back to.
+              opacity: backButton.active ? (backMouse.containsMouse ? 1 : 0.7) : 0
+              font.family: root.fontFamily
+              font.pixelSize: root.fontTitle
+            }
+
+            MouseArea {
+              id: backMouse
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: backButton.active ? Qt.PointingHandCursor : Qt.ArrowCursor
+              enabled: backButton.active
+              onClicked: root.goBack()
+            }
+          }
+
           // KRunner-style filter button: opens the Sources page.
           Rectangle {
             id: filterButton
@@ -1620,7 +1668,7 @@ Item {
             width: root.headerHeight
             height: root.headerHeight
             radius: root.cornerRadius
-            anchors.left: parent.left
+            anchors.left: backButton.right
             anchors.verticalCenter: parent.verticalCenter
             color: active ? root.selectedBackground : (filterMouse.containsMouse ? Util.alpha(root.foreground, 0.08) : "transparent")
 
@@ -1710,6 +1758,43 @@ Item {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/gdeyoung/foyer"))
+              }
+            }
+          }
+
+          // Microphone: click to toggle VoxType dictation into the search
+          // box — dictated phrases ("brave search for x", "ask ai x") are
+          // normalized by VoiceModel as they arrive. Shown only when the
+          // voxtype CLI is installed.
+          Rectangle {
+            id: micButton
+            width: root.headerHeight
+            height: root.headerHeight
+            radius: root.cornerRadius
+            anchors.right: helpButton.left
+            visible: root.voxtypePresent
+            color: micMouse.containsMouse ? Util.alpha(root.foreground, 0.08) : "transparent"
+
+            Text {
+              anchors.centerIn: parent
+              textFormat: Text.PlainText
+              text: "\uf130"
+              color: root.foreground
+              opacity: micMouse.containsMouse ? 1 : 0.7
+              font.family: root.fontFamily
+              font.pixelSize: root.fontTitle
+            }
+
+            MouseArea {
+              id: micMouse
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onClicked: {
+                micToggle.startDetached()
+                // The click must not strand focus on the button: dictation
+                // types into whatever holds keyboard focus.
+                Qt.callLater(function() { keyCatcher.forceActiveFocus() })
               }
             }
           }

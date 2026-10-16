@@ -316,6 +316,20 @@ test("the typed Use row follows the matching presets; Custom… applies a typed 
   assert.ok(qml.includes("var typedValue = root.typedRowFor(root.activeMenu, root.filterText)"))
 })
 
+test("the header carries a mouse back arrow and a VoxType mic button", () => {
+  // Back: same step as Esc, laid out always so nothing shifts.
+  assert.match(qml, /id: backButton[\s\S]*?onClicked: root\.goBack\(\)/)
+  assert.match(qml, /id: backButton[\s\S]*?readonly property bool active: root\.activeMenu !== "root"/)
+  assert.match(qml, /id: filterButton[\s\S]*?anchors\.left: backButton\.right/)
+  // Mic: toggles VoxType, then hands keyboard focus back so dictation lands
+  // in the search box; hidden when the CLI is absent.
+  assert.match(qml, /id: micButton[\s\S]*?micToggle\.startDetached\(\)/)
+  assert.match(qml, /id: micButton[\s\S]*?Qt\.callLater\(function\(\) \{ keyCatcher\.forceActiveFocus\(\) \}\)/)
+  assert.ok(qml.includes('command: ["voxtype", "record", "toggle"]'), "toggles dictation")
+  assert.match(qml, /id: voxtypeProbe[\s\S]*?command -v voxtype/, "presence probe")
+  assert.match(qml, /visible: root\.voxtypePresent/, "hidden without voxtype")
+})
+
 test("the Settings and Sources pages are labelled as foyer's own", () => {
   assert.ok(qml.includes('label: "Foyer Settings",\n      title: "Foyer Settings"'))
   assert.ok(qml.includes('label: "Foyer Sources",\n      title: "Foyer Sources"'))

@@ -12,7 +12,9 @@ function SECTIONS() {
       ["type anything", "live results from every source"],
       ["Up · Down · Enter · Esc", "move, choose, back up, close"],
       ["Ctrl+P", "pin a result to Favorites"],
-      ["Ctrl+S · Ctrl+,", "settings · sources"]
+      ["Ctrl+S · Ctrl+,", "settings · sources"],
+      ["click ⬅ · Esc", "go back a page"],
+      ["click rows · hover", "the list is fully mouse-driven"]
     ] },
     { heading: "Quick answers", examples: [
       ["2+2*3 · 10 km to mi", "calculator and units — Enter copies"],
@@ -44,6 +46,7 @@ function SECTIONS() {
       ["nvim", "open window titles"]
     ] },
     { heading: "Voice — dictate it", examples: [
+      ["click the mic", "toggle VoxType dictation"],
       ["ask ai why is dns slow", "dictated, lands in AI"],
       ["brave search for arch wifi", "dictated, lands in Brave"],
       ["search the web for omarchy", "dictated, default engine"]
