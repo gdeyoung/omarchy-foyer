@@ -16,6 +16,8 @@ const Settings = await loadJsModule("SettingsModel.js")
 test("handoffs: defaults when unconfigured, config wins when set", () => {
   assert.equal(Handoffs.resolve({}).length, 6)
   assert.equal(Handoffs.resolve({ handoffs: [{ prefix: "gh", label: "X", url: "https://x/%s" }] }).length, 1)
+  // Every default must survive sanitize, or the first edit silently drops it.
+  assert.equal(Handoffs.sanitize(Handoffs.defaults()).length, 6)
 })
 
 test("handoffs: prefixes cannot shadow built-ins or break the rules", () => {

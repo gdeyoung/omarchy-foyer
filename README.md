@@ -240,7 +240,7 @@ Folders, Files and Recent. A search that matches nothing offers a web search.
 | Kill | `kill firefox` | `kill` (SIGTERM) | `kill -KILL` |
 | Clipboard | `cb`, `cb git`, `cb scr` (images), `cb list` | paste into the previous window | copy only |
 | Web | `br query`, `dd query`, `gg query`, `yt query`, `wiki query` | open in the browser | copy the URL |
-| Handoffs | `gh kubernetes` (your prefixes: `gh`, `mdn`, `aur`, `amz`, `el`, `m`) | open the URL with the query | — |
+| Handoffs | `gh kubernetes` (your prefixes: `gh`, `mdn`, `aur`, `amz`, `el`, `map`) | open the URL with the query | — |
 | Reminders | `15 break`, `10m`, `1h`, `remind 20m laundry`, `remind 6:30p call`, `reminders` | set via `omarchy reminder` | — |
 | Controls | `bright 40`, `vol 20`, `mute` | run it | — |
 | Date | `today`, `oct 20`, `in 2 weeks`, `oct 20 + 3 days` | copy the date | — |
@@ -259,7 +259,7 @@ copied secrets never show in an ordinary search.
 in — `gh kubernetes` → `https://github.com/search?q=kubernetes`. Open the
 **Handoffs** entry in the menu (or search `handoffs`), type
 `prefix Label https://…%s` and press Enter to add; Enter on a row removes it.
-Six ship as defaults (`gh`, `mdn`, `aur`, `amz`, `el`, `m`) and live in
+Six ship as defaults (`gh`, `mdn`, `aur`, `amz`, `el`, `map`) and live in
 `foyer.json` under `handoffs`:
 
 ```json

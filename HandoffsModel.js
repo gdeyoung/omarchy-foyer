@@ -38,7 +38,7 @@ function defaults() {
     { prefix: "aur", label: "AUR", url: "https://aur.archlinux.org/packages?K=%s" },
     { prefix: "amz", label: "Amazon", url: "https://www.amazon.com/s?k=%s" },
     { prefix: "el", label: "Elastic", url: "https://www.elastic.co/search?q=%s" },
-    { prefix: "m", label: "Maps", url: "https://www.google.com/maps/search/%s" }
+    { prefix: "map", label: "Maps", url: "https://www.google.com/maps/search/%s" }
   ]
 }
 
