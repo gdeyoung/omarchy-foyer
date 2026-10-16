@@ -643,6 +643,10 @@ Item {
     if (!cursorActive) {
       cursorActive = true
       selectedIndex = delta < 0 ? displayModel.count - 1 : 0
+    } else if (delta < 0 && selectedIndex === 0) {
+      // Up from the first row hands the cursor back to the search box.
+      cursorActive = false
+      return
     } else {
       selectedIndex = (selectedIndex + delta + displayModel.count) % displayModel.count
     }
@@ -658,7 +662,9 @@ Item {
     if (root.filterText.trim().length > 0 && root.activeMenu === "root") root.bumpSerial()
     else root.clearSources()
     root.selectedIndex = 0
-    root.cursorActive = true
+    // Typing keeps the caret in the search box; Down arrow moves it into the
+    // results, and Enter on the box runs the top hit (KRunner-style).
+    root.cursorActive = false
     root.disarmPointer()
     if (root.filterText.trim()) root.loadProvidersForSearch()
     root.rebuildDisplay()
@@ -949,7 +955,7 @@ Item {
     filterText = ""
     root.clearSources()
     selectedIndex = 0
-    cursorActive = true
+    cursorActive = false
     root.disarmPointer()
     root.evaluateGuards()
     opened = true
@@ -1362,9 +1368,10 @@ Item {
             root.requestDeleteSelected()
             event.accepted = true
           } else if (event.key === Qt.Key_Escape) {
+            // Esc clears the query, then backs up one menu level, and only
+            // closes the launcher at the root of the tree.
             if (root.filterText) root.setFilter("")
-            else if (root.inPage("sources") || root.inPage("omarunner-settings")) root.goBack()
-            else root.cancel()
+            else if (!root.goBack()) root.cancel()
             event.accepted = true
           } else if (Util.editsFilter(event, root.filterText)) {
             root.setFilter(Util.editedFilter(event, root.filterText))
@@ -1386,7 +1393,7 @@ Item {
             event.accepted = true
           } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Right) {
             if (root.cursorActive) root.activateIndex(root.selectedIndex, false, event.modifiers)
-            else if (displayModel.count > 0) root.cursorActive = true
+            else if (displayModel.count > 0) root.activateIndex(0, false, event.modifiers)
             event.accepted = true
           } else if (event.text && event.text.length === 1 && event.text.charCodeAt(0) >= 32 && event.text.charCodeAt(0) !== 127 && (event.modifiers === Qt.NoModifier || event.modifiers === Qt.ShiftModifier)) {
             root.setFilter(root.filterText + event.text)
@@ -1559,17 +1566,21 @@ Item {
             }
           }
 
-          // Blinking accent caret while a Custom… value is being typed.
+          // Blinking accent caret while a Custom… value is being typed, and
+          // whenever the cursor sits in the search box rather than the list:
+          // on open and while typing, until Down arrow enters the results.
           Rectangle {
             id: headerCaret
-            visible: root.editingCustom
+            visible: root.editingCustom || !root.cursorActive
             width: Style.space(2)
             height: headerText.implicitHeight
             anchors.verticalCenter: parent.verticalCenter
-            x: headerText.x + (root.filterText ? Math.min(headerText.contentWidth, headerText.width) + Style.space(2) : -Style.space(7))
+            x: headerText.x + (root.filterText
+              ? Math.min(headerText.contentWidth, headerText.width) + Style.space(2)
+              : (root.editingCustom ? -Style.space(7) : -Style.space(2)))
             color: root.accent
             SequentialAnimation on opacity {
-              running: root.editingCustom
+              running: headerCaret.visible
               loops: Animation.Infinite
               NumberAnimation { to: 0; duration: 500 }
               NumberAnimation { to: 1; duration: 500 }

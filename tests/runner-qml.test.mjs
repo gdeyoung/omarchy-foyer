@@ -357,8 +357,14 @@ test("recent files are checked for existence before they are offered", async () 
   assert.ok(src.includes("RecentModel.keepExisting(root.parsed, output)"))
 })
 
-test("Escape on the Sources or Settings page goes back instead of closing", () => {
-  assert.ok(qml.includes('else if (root.inPage("sources") || root.inPage("omarunner-settings")) root.goBack()'))
+test("Escape clears the query, backs up a menu level, and only closes at root", () => {
+  assert.ok(qml.includes('if (root.filterText) root.setFilter("")'))
+  assert.ok(qml.includes('else if (!root.goBack()) root.cancel()'))
+})
+
+test("the caret starts in the search box: open and typing leave the list unselected", () => {
+  assert.ok(qml.includes("else if (delta < 0 && selectedIndex === 0) {"))
+  assert.ok(qml.includes("else if (displayModel.count > 0) root.activateIndex(0, false, event.modifiers)"))
 })
 
 test("a source that also answers unprefixed queries is exempt from the prefix guard", async () => {
