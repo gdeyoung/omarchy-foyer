@@ -64,6 +64,41 @@ function TOGGLES() {
   ]
 }
 
+// The AI provider settings page: any OpenAI-compatible endpoint. Values live
+// in the top-level `ai` config key (baseUrl / model / apiKey), not in
+// `settings`, so AiSource reads them straight from the file.
+function AI_CHOICES() {
+  return [
+    { key: "aiUrl", label: "Endpoint", choices: [
+      { label: "Ollama", value: "http://localhost:11434/v1" },
+      { label: "LM Studio", value: "http://localhost:1234/v1" },
+      { label: "OpenAI", value: "https://api.openai.com/v1" }
+    ] },
+    { key: "aiModel", label: "Model", choices: [] },
+    { key: "aiKey", label: "API key", choices: [] }
+  ]
+}
+
+function isAiKey(key) { return key === "aiUrl" || key === "aiModel" || key === "aiKey" }
+
+function aiKeyToField(key) { return key === "aiUrl" ? "baseUrl" : key === "aiModel" ? "model" : "apiKey" }
+
+// The AI page's display values from the config's ai section.
+function aiValues(ai) {
+  var section = ai && typeof ai === "object" && !Array.isArray(ai) ? ai : ({})
+  return { aiUrl: typeof section.baseUrl === "string" ? section.baseUrl : "",
+    aiModel: typeof section.model === "string" ? section.model : "",
+    aiKey: typeof section.apiKey === "string" ? section.apiKey : "" }
+}
+
+// The API key never shows whole in a row: its label says only whether it is
+// set and its last four characters.
+function aiLabel(key, value) {
+  if (key !== "aiKey") return currentLabel(key, value)
+  if (!value) return "Not set"
+  return "…" + String(value).slice(-4)
+}
+
 function defaults() {
   return { width: 420, rows: 9, density: 28, fontScale: 85, hintScale: 100, fontFamily: "", border: 2, opacity: 100, radius: -1, accent: "theme", location: "center", recents: 5, recentsOn: false, favoritesShown: 30, favoritesOn: true, menuOnStart: true, fuzzy: true, categories: true, hints: true, about: true }
 }
@@ -71,6 +106,8 @@ function defaults() {
 function choiceFor(key) {
   var list = CHOICES()
   for (var i = 0; i < list.length; i++) if (list[i].key === key) return list[i]
+  var aiList = AI_CHOICES()
+  for (var a = 0; a < aiList.length; a++) if (aiList[a].key === key) return aiList[a]
   return null
 }
 
@@ -141,6 +178,9 @@ function customChoice(key, text) {
   var raw = String(text || "").trim()
   if (key === "fontFamily") return raw && raw.length <= 64 ? { value: raw, label: raw } : null
   if (key === "accent") return isHexColour(raw) ? { value: raw, label: raw } : null
+  if (key === "aiUrl") return /^https?:\/\/\S+$/i.test(raw) && raw.length <= 200 ? { value: raw, label: raw } : null
+  if (key === "aiModel") return raw.length >= 1 && raw.length <= 64 ? { value: raw, label: raw } : null
+  if (key === "aiKey") return raw.length >= 4 && raw.length <= 200 ? { value: raw, label: raw } : null
   if (!RANGES()[key]) return null
   var match = /^(\d+)\s*(%|px)?$/i.exec(raw)
   if (!match) return null
@@ -181,12 +221,16 @@ function customDisplayRow(activeMenu, text) {
     score: 0, section: "", sourceId: "", value: key + "=" + choice.value }
 }
 
-// Choices that allow a typed value: numbers in a range, a font name, a colour.
-function hasCustom(key) { return key === "fontFamily" || key === "accent" || !!RANGES()[key] }
+// Choices that allow a typed value: numbers in a range, a font name, a colour,
+// an AI endpoint/model/key.
+function hasCustom(key) { return key === "fontFamily" || key === "accent" || isAiKey(key) || !!RANGES()[key] }
 
 function customHint(key) {
   if (key === "fontFamily") return "Type a font name"
   if (key === "accent") return "Type a hex colour, like #ff8800"
+  if (key === "aiUrl") return "Type the base URL, like http://localhost:11434/v1"
+  if (key === "aiModel") return "Type a model name, like llama3.1 or gpt-4o-mini"
+  if (key === "aiKey") return "Paste the API key"
   var range = RANGES()[key]
   return "Type a number, " + range[0] + "–" + range[1]
 }
@@ -210,20 +254,23 @@ function menuRow(id, parent, label, order) {
 // setupCommand: shell command that opens the keybinding wizard; when given,
 // a "Keybindings…" row runs it. (The version and GitHub link is a header item
 // in Runner.qml, switched by the "about" setting.)
-function pageRows(settingsIn, setupCommand, favorites) {
+function pageRows(settingsIn, setupCommand, favorites, aiIn) {
   var settings = settingsIn || defaults()
+  var ai = aiValues(aiIn)
   var entries = []
   var checked = ({})
   var list = CHOICES()
 
   // A choice submenu (its label shows the current value) with its presets and
-  // Custom… row, under `parentId`.
+  // Custom… row, under `parentId`. `values` holds the current value per key:
+  // the settings' own for ordinary choices, the ai section's for the AI page.
   // `inline` lists the presets straight in `parentId` (Favorites, Recent
   // launches) instead of behind a submenu row.
-  function choiceGroup(item, parentId, inline) {
+  function choiceGroup(item, parentId, inline, values) {
     var key = item.key
+    var current = values[key]
     var menuId = inline ? parentId : PAGE_ID() + "." + key
-    var group = inline ? [] : [menuRow(menuId, parentId, item.label + " · " + currentLabel(key, settings[key]), 0)]
+    var group = inline ? [] : [menuRow(menuId, parentId, item.label + " · " + (isAiKey(key) ? aiLabel(key, current) : currentLabel(key, current)), 0)]
     for (var c = 0; c < item.choices.length; c++) {
       var choice = item.choices[c]
       var id = PAGE_ID() + "." + key + "." + c
@@ -231,14 +278,14 @@ function pageRows(settingsIn, setupCommand, favorites) {
       group.push({ id: id, parent: menuId, kind: "setting-option", icon: key === "accent" ? "●" : "", iconFont: "", label: choice.label, title: "",
         target: "", description: "", action: "", provider: "", aliases: [], when: "", checked: "config",
         value: key + "=" + choice.value, order: 0 })
-      checked[id] = settings[key] === choice.value
+      checked[id] = current === choice.value
     }
     // Custom…: a reminder of what may be typed here, ticked for a custom value.
     var customId = PAGE_ID() + "." + key + ".custom"
     if (hasCustom(key)) group.push({ id: customId, parent: menuId, kind: "setting-custom", icon: "", iconFont: "", label: "Custom…", title: "",
       target: "", description: customHint(key), action: "", provider: "", aliases: [], when: "", checked: "config",
       value: key, order: 0 })
-    if (hasCustom(key)) checked[customId] = !isPreset(key, settings[key])
+    if (hasCustom(key)) checked[customId] = !isPreset(key, current) && current !== ""
     return group
   }
 
@@ -257,13 +304,13 @@ function pageRows(settingsIn, setupCommand, favorites) {
     checked[menuId] = settings[onKey] === true
     var toggles = TOGGLES()
     for (var t = 0; t < toggles.length; t++) if (toggles[t].key === onKey) rows.push(toggleRow(toggles[t], menuId))
-    for (var i = 0; i < list.length; i++) if (list[i].under === under) rows = rows.concat(choiceGroup(list[i], menuId, true))
+    for (var i = 0; i < list.length; i++) if (list[i].under === under) rows = rows.concat(choiceGroup(list[i], menuId, true, settings))
     return { name: name, rows: rows.concat(extra || []) }
   }
 
   for (var i = 0; i < list.length; i++) {
     if (list[i].under) continue
-    entries.push({ name: list[i].label, rows: choiceGroup(list[i], PAGE_ID()) })
+    entries.push({ name: list[i].label, rows: choiceGroup(list[i], PAGE_ID(), false, settings) })
   }
   var toggles = TOGGLES()
   for (var t = 0; t < toggles.length; t++) {
@@ -288,6 +335,19 @@ function pageRows(settingsIn, setupCommand, favorites) {
   }
   entries.push(switchedEntry("Favorites", "favorites", "favoritesOn", pins))
   entries.push(switchedEntry("Recent launches", "launches", "recentsOn", []))
+
+  // AI answers: endpoint, model and key under one page. A note explains the
+  // trigger while the three are not all set.
+  var aiId = PAGE_ID() + ".ai"
+  var aiRows = [menuRow(aiId, PAGE_ID(), "AI answers", 0)]
+  if (!ai.aiUrl || !ai.aiModel || !ai.aiKey) {
+    aiRows.push({ id: aiId + ".note", parent: aiId, kind: "note", icon: "", iconFont: "", label: "Set all three to ask with \u201Cai \u2026\u201D", title: "",
+      target: "", description: "Any OpenAI-compatible endpoint", action: "", provider: "", aliases: [], when: "", checked: "",
+      value: "", order: 0 })
+  }
+  var aiList = AI_CHOICES()
+  for (var a = 0; a < aiList.length; a++) aiRows = aiRows.concat(choiceGroup(aiList[a], aiId, false, ai))
+  entries.push({ name: "AI answers", rows: aiRows })
   if (setupCommand) {
     entries.push({ name: "Keybindings", rows: [{ id: PAGE_ID() + ".keys", parent: PAGE_ID(), kind: "action", icon: "",
       iconFont: "", label: "Keybindings…", title: "", target: "", description: "Choose the keys that open foyer",
@@ -302,17 +362,28 @@ function pageRows(settingsIn, setupCommand, favorites) {
   return { rows: rows, checked: checked }
 }
 
-// Applies one option row's "key=value" to the config.
+// Applies one option row's "key=value" to the config. AI keys land in the
+// top-level `ai` section (split at the first "=", so keys with "=" survive).
 function applyOption(config, optionValue) {
   var text = String(optionValue || "")
   var eq = text.indexOf("=")
   if (eq <= 0) return config
   var key = text.slice(0, eq)
-  return withSetting(config, key, parseValue(key, text.slice(eq + 1)))
+  var value = text.slice(eq + 1)
+  if (isAiKey(key)) return withAiSetting(config, key, value)
+  return withSetting(config, key, parseValue(key, value))
+}
+
+function withAiSetting(config, key, value) {
+  var next = JSON.parse(JSON.stringify(config || ({})))
+  if (!next.ai || typeof next.ai !== "object" || Array.isArray(next.ai)) next.ai = ({})
+  next.ai[aiKeyToField(key)] = value
+  return next
 }
 
 if (typeof module !== "undefined") {
   module.exports = { defaults: defaults, resolve: resolve, withSetting: withSetting, toggled: toggled,
     currentLabel: currentLabel, pageRows: pageRows, applyOption: applyOption, customChoice: customChoice,
-    customDisplayRow: customDisplayRow, keyForMenu: keyForMenu, listsInline: listsInline, customHint: customHint }
+    customDisplayRow: customDisplayRow, keyForMenu: keyForMenu, listsInline: listsInline, customHint: customHint,
+    aiValues: aiValues, withAiSetting: withAiSetting }
 }

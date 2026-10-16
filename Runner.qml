@@ -778,7 +778,8 @@ Item {
     // "Keybindings…" opens the setup wizard in a floating terminal.
     var setup = Quickshell.env("HOME") + "/.config/omarchy/plugins/gdeyoung.foyer/bin/foyer-setup"
     var page = SettingsModel.pageRows(SettingsModel.resolve(sourceConfig.config),
-      "omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(setup), historyStore.favorites)
+      "omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(setup), historyStore.favorites,
+      sourceConfig.config.ai)
     for (var p = 0; p < page.rows.length; p++) {
       page.rows[p].order = order.length
       items[page.rows[p].id] = page.rows[p]

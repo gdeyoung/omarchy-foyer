@@ -292,6 +292,55 @@ test("pinned items and the no-favorites note sit in their own group, so a divide
   const fav = [{ key: "app:foot", kind: "app", label: "foot", detail: "", appId: "foot" }]
   const rows = S.pageRows(S.defaults(), "", fav).rows.filter(r => r.parent === "foyer-settings.favorites")
   assert.deepEqual(rows.map(r => r.section || ""), ["", "", "", "", "", "", "group:pinned"])
-  const none = S.pageRows(S.defaults(), "", []).rows.filter(r => r.kind === "note")
+  const none = S.pageRows(S.defaults(), "", []).rows.filter(r => r.kind === "note" && r.parent === "foyer-settings.favorites")
   assert.equal(none[0].section, "group:pinned")
+})
+
+test("the AI page lists endpoint, model and key from the ai config", () => {
+  const ai = { baseUrl: "http://100.78.79.41:4000/v1", apiKey: "sk-verysecretkey99", model: "local-fast" }
+  const page = S.pageRows(S.defaults(), "", [], ai)
+  const row = (id) => page.rows.find(r => r.id === id)
+  assert.ok(row("foyer-settings.ai"), "AI answers page row")
+  assert.equal(row("foyer-settings.aiUrl").label, "Endpoint · Custom (http://100.78.79.41:4000/v1)")
+  assert.equal(row("foyer-settings.aiModel").label, "Model · Custom (local-fast)")
+  // The key is masked: only its last four characters appear.
+  assert.equal(row("foyer-settings.aiKey").label, "API key · …ey99")
+  assert.ok(!JSON.stringify(page.rows).includes("sk-verysecret"), "no full key in any row")
+  // Presets and Custom… rows exist for each.
+  assert.ok(row("foyer-settings.aiUrl.0"), "Ollama preset")
+  assert.equal(row("foyer-settings.aiUrl.0").label, "Ollama")
+  assert.ok(row("foyer-settings.aiModel.custom"), "Model Custom…")
+  assert.ok(page.checked["foyer-settings.aiUrl.custom"] === true, "custom URL ticks Custom…")
+  assert.ok(page.checked["foyer-settings.aiUrl.0"] === false)
+})
+
+test("the AI page shows a setup note while unconfigured", () => {
+  const page = S.pageRows(S.defaults(), "", [], {})
+  assert.ok(page.rows.some(r => r.id === "foyer-settings.ai.note"))
+  const full = S.pageRows(S.defaults(), "", [], { baseUrl: "http://x/v1", apiKey: "sk-1234", model: "m" })
+  assert.ok(!full.rows.some(r => r.id === "foyer-settings.ai.note"))
+})
+
+test("AI options apply to the ai section, not settings", () => {
+  let c = S.applyOption({}, "aiUrl=http://localhost:11434/v1")
+  c = S.applyOption(c, "aiModel=llama3.1")
+  c = S.applyOption(c, "aiKey=sk-abc=def")
+  assert.deepEqual(c.ai, { baseUrl: "http://localhost:11434/v1", model: "llama3.1", apiKey: "sk-abc=def" })
+  assert.deepEqual(c.settings, undefined)
+  // Ordinary options still go to settings.
+  c = S.applyOption(c, "width=640")
+  assert.equal(c.settings.width, 640)
+})
+
+test("AI custom values are validated by kind", () => {
+  assert.equal(S.customChoice("aiUrl", "http://x:4000/v1").value, "http://x:4000/v1")
+  assert.equal(S.customChoice("aiUrl", "ftp://x"), null)
+  assert.equal(S.customChoice("aiUrl", "no scheme"), null)
+  assert.equal(S.customChoice("aiModel", "gpt-4o-mini").value, "gpt-4o-mini")
+  assert.equal(S.customChoice("aiKey", "sk-1234").value, "sk-1234")
+  assert.equal(S.customChoice("aiKey", "abc"), null)
+  // Typed rows offered while typing on an AI page.
+  const typed = S.customDisplayRow("foyer-settings.aiModel", "qwen2.5:7b")
+  assert.equal(typed.value, "aiModel=qwen2.5:7b")
+  assert.equal(typed.label, "Use qwen2.5:7b")
 })
