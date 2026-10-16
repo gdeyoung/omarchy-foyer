@@ -28,13 +28,21 @@ function requestBody(model, question) {
   })
 }
 
-// curl reads the Authorization header from the config file and the JSON body
-// from stdin, so neither the key nor the question appears in /proc.
+// curl reads the Authorization header from the config file, and the JSON body
+// arrives on stdin as one line: the shell consumes it with read, pipes it to
+// curl and exits, which gives curl the EOF that --data @- waits for. Neither
+// the key nor the question appears in /proc.
 function curlArgs(baseUrl, confPath) {
   var url = String(baseUrl || "").replace(/\/+$/, "") + "/chat/completions"
   return ["sh", "-c",
-    'exec curl -sS --max-time 25 --config "$1" -H "Content-Type: application/json" "$2" --data @-',
+    'IFS= read -r body; printf "%s" "$body" | exec curl -sS --max-time 25 --config "$1" -H "Content-Type: application/json" "$2" --data @-',
     "sh", confPath, url]
+}
+
+// The body is one JSON line (JSON.stringify never emits a raw newline), so a
+// single read consumes it whole.
+function stdinFor(body) {
+  return String(body || "") + "\n"
 }
 
 function parseResponse(output) {
@@ -70,7 +78,7 @@ function rowsFor(question, parsed, model, webSearchUrl) {
 
 if (typeof module !== "undefined") {
   module.exports = {
-    claims: claims, terms: terms, requestBody: requestBody, curlArgs: curlArgs,
+    claims: claims, terms: terms, requestBody: requestBody, curlArgs: curlArgs, stdinFor: stdinFor,
     parseResponse: parseResponse, thinkingRows: thinkingRows, rowsFor: rowsFor
   }
 }

@@ -31,8 +31,10 @@ test("curl reads auth and body outside argv", () => {
   assert.equal(argv[0], "sh")
   assert.ok(argv[2].includes("--config \"$1\""))
   assert.ok(argv[2].includes("--data @-"))
+  assert.ok(argv[2].includes("read -r body"))
   assert.ok(argv.includes("http://100.78.79.41:4000/v1/chat/completions"))
   assert.ok(!argv.join(" ").includes("Bearer"))
+  assert.equal(Ai.stdinFor("{}"), "{}\n")
 })
 
 test("parseResponse takes the answer, the endpoint error, or nothing", () => {

@@ -41,7 +41,7 @@ Item {
     if (!question) { runner.cancel(); root.results(serial, []); return }
     root.results(serial, AiModel.thinkingRows(question, root.config.model))
     runner.run(AiModel.curlArgs(root.config.baseUrl, root.confPath), serial, question,
-      AiModel.requestBody(root.config.model, question))
+      AiModel.stdinFor(AiModel.requestBody(root.config.model, question)))
   }
 
   function cancel() { runner.cancel() }
