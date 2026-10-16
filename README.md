@@ -218,6 +218,9 @@ foyer does not raise the shell's launch OSD.
 
 ## What you can type
 
+Press the **"?"** button in the header (or `F1`, or search for `help`) for the
+built-in examples page.
+
 Results are grouped. Calculator and Open rows sit at the top; then Omarchy,
 Applications and Session, whichever holds the best match first; then Windows,
 Folders, Files and Recent. A search that matches nothing offers a web search.

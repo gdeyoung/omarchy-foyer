@@ -9,6 +9,7 @@ import "SourceModel.js" as SourceModel
 import "SettingsModel.js" as SettingsModel
 import "HistoryModel.js" as HistoryModel
 import "VoiceModel.js" as VoiceModel
+import "HelpModel.js" as HelpModel
 
 Item {
   id: root
@@ -786,6 +787,17 @@ Item {
       order.push(page.rows[p].id)
     }
     for (var pk in page.checked) checked[pk] = page.checked[pk]
+    // The Help page: static example rows, findable by searching "help".
+    items[HelpModel.PAGE_ID()] = { id: HelpModel.PAGE_ID(), parent: "root", kind: "menu", icon: "\uf059", iconFont: "", label: "Foyer Help",
+      title: "Foyer Help", target: "", description: "What you can type, with examples", action: "", provider: "",
+      aliases: ["help", "cheatsheet", "what can i type"], when: "", checked: "", order: order.length }
+    order.push(HelpModel.PAGE_ID())
+    var help = HelpModel.pageRows()
+    for (var h = 0; h < help.rows.length; h++) {
+      help.rows[h].order = order.length
+      items[help.rows[h].id] = help.rows[h]
+      order.push(help.rows[h].id)
+    }
     root.items = items
     root.itemOrder = order
     root.checkedResults = checked
@@ -838,6 +850,13 @@ Item {
   function toggleSettingsPage() { root.togglePage("foyer-settings") }
 
   function toggleSourcesPage() { root.togglePage("sources") }
+
+  function toggleHelpPage() {
+    if (root.inPage(HelpModel.PAGE_ID())) { root.closePage(HelpModel.PAGE_ID()); return }
+    root.closePage("sources")
+    root.closePage("foyer-settings")
+    root.setActiveMenu(HelpModel.PAGE_ID(), true, false)
+  }
 
   function goBack() {
     if (root.activeMenu === "root") return false
@@ -1375,6 +1394,9 @@ Item {
           } else if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_Comma) {
             root.toggleSourcesPage()
             event.accepted = true
+          } else if (event.key === Qt.Key_F1) {
+            root.toggleHelpPage()
+            event.accepted = true
           } else if (event.key === Qt.Key_Delete) {
             root.requestDeleteSelected()
             event.accepted = true
@@ -1494,7 +1516,7 @@ Item {
           Row {
             id: aboutBox
             visible: root.settings.about && root.version !== "" && gearButton.active
-            anchors.right: gearButton.left
+            anchors.right: helpButton.left
             anchors.rightMargin: Style.space(6)
             anchors.verticalCenter: parent.verticalCenter
             spacing: Style.space(6)
@@ -1544,6 +1566,36 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/gdeyoung/foyer"))
               }
+            }
+          }
+
+          // Help "?" button: the examples page.
+          Rectangle {
+            id: helpButton
+            readonly property bool active: root.activeMenu === HelpModel.PAGE_ID()
+            width: root.headerHeight
+            height: root.headerHeight
+            radius: root.cornerRadius
+            anchors.right: gearButton.left
+            anchors.verticalCenter: parent.verticalCenter
+            color: active ? root.selectedBackground : (helpMouse.containsMouse ? Util.alpha(root.foreground, 0.08) : "transparent")
+
+            Text {
+              anchors.centerIn: parent
+              textFormat: Text.PlainText
+              text: "?"
+              color: helpButton.active ? root.selectedText : root.foreground
+              opacity: helpButton.active || helpMouse.containsMouse ? 1 : 0.7
+              font.family: root.fontFamily
+              font.pixelSize: root.fontTitle
+            }
+
+            MouseArea {
+              id: helpMouse
+              anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onClicked: root.toggleHelpPage()
             }
           }
 
