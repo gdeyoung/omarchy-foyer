@@ -18,6 +18,10 @@ function normalize(query) {
   text = text.replace(/^youtube\s+search\s+/i, "yt ")
   text = text.replace(/^(?:brave\s+search|search\s+(?:with\s+)?brave)(?:\s+for)?\s+/i, "br ")
 
+  // Filler left when the rewrite fired early (typing one character at a time
+  // rewrites at "brave search " already): "br for x" is "br x".
+  text = text.replace(/^(br|dd|gg|yt|wiki)\s+for\s+/i, "$1 ")
+
   // "search the web for x" — the plain query keeps the default-engine row.
   text = text.replace(/^(?:search|look\s*up)\s+(?:the\s+)?(?:web|internet)(?:\s+for)?\s+/i, "")
 

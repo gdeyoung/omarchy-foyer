@@ -25,6 +25,12 @@ test("dictated colons collapse to the typed prefix form", () => {
   assert.equal(V.normalize("cb  :  copied text"), "cb: copied text")
 })
 
+test("filler after an early rewrite drops out", () => {
+  assert.equal(V.normalize("br for arch wifi"), "br arch wifi")
+  assert.equal(V.normalize("br for arch wifi"), V.normalize(V.normalize("brave search for arch wifi")))
+  assert.equal(V.normalize("br forget mills"), "br forget mills")
+})
+
 test("ordinary queries pass through untouched, and normalize is idempotent", () => {
   for (const q of ["firefox", "google chrome", "brave browser", "ask a friend", "searching for cats", "ai why is dns slow", "br arch wifi", "why is dns slow"]) {
     assert.equal(V.normalize(V.normalize(q)), V.normalize(q), q)
