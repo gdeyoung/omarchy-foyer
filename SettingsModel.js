@@ -195,8 +195,12 @@ function customChoice(key, text) {
 
 // The setting a settings menu edits: its own key, or for the Favorites and
 // Recent launches pages (which list their amounts inline) the amount's key.
-// Pages that list their presets inline: picking one stays on the page.
-function listsInline(menu) { return menu === PAGE_ID() + ".favorites" || menu === PAGE_ID() + ".launches" }
+// Pages that list their presets inline: picking one stays on the page. The
+// Handoffs and Snippets pages do the same for their add rows.
+function listsInline(menu) {
+  return menu === PAGE_ID() + ".favorites" || menu === PAGE_ID() + ".launches"
+    || menu === "foyer-handoffs" || menu === "foyer-snippets"
+}
 
 function keyForMenu(menu) {
   var prefix = PAGE_ID() + "."

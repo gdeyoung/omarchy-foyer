@@ -682,7 +682,8 @@ function buildRows(items, itemOrder, whenResults, checkedResults, activeMenu, qu
     if (isConfigRow(entry) && entry.parent !== active) continue
     // Settings submenus ("Font · Omarchy default") stay off the root search;
     // any other page already drops them as non-descendants below.
-    if (active === "root" && (String(entry.id).indexOf("foyer-settings.") === 0 || String(entry.id).indexOf("foyer-help.") === 0)) continue
+    if (active === "root" && (String(entry.id).indexOf("foyer-settings.") === 0 || String(entry.id).indexOf("foyer-help.") === 0
+        || String(entry.id).indexOf("foyer-handoffs.") === 0 || String(entry.id).indexOf("foyer-snippets.") === 0)) continue
     if (!isDescendantOf(items, entry.id, active)) continue
     if (!matchesQuery(entry, trimmed, isVisible(items, itemOrder, whenResults, entry), fuzzy)) continue
 

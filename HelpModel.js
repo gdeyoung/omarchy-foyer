@@ -21,10 +21,22 @@ function SECTIONS() {
     ] },
     { heading: "Hand-offs to the right room", examples: [
       ["br arch wiki", "search Brave — also dd, gg, yt, wiki"],
+      ["gh kubernetes", "your handoff prefixes (gh, mdn, aur, …)"],
       ["github.com/x · ~/Downloads", "open a URL or a folder"],
       ["> htop", "run a command in a terminal"],
       ["kill firefox", "end a process"],
       ["cb git", "clipboard history — never in plain search"]
+    ] },
+    { heading: "Everyday wins", examples: [
+      ["15 break · remind 20m laundry", "a reminder — omarchy reminder"],
+      ["remind 6:30p call", "remind at a clock time"],
+      ["bright 40 · vol 20 · mute", "brightness, volume, mute"],
+      ["in 2 weeks · oct 20 + 3 days", "a date, computed"],
+      ["time oslo", "the time in a city"],
+      [":fire", "an emoji — Enter copies"],
+      [";sig", "a text snippet you defined"],
+      ["ssh gdtower", "open an SSH host in a terminal"],
+      ["empty trash", "clear the trash — two Enters"]
     ] },
     { heading: "Finding things", examples: [
       ["fire", "apps, menu, files, windows at once"],

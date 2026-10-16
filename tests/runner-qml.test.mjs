@@ -212,7 +212,7 @@ test("prefix sources claim their queries; leading sources lead", async () => {
 })
 
 test("the runner registers every source and gives claimed queries to their source alone", () => {
-  assert.ok(qml.includes("property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource, aiSource]"))
+  assert.ok(qml.includes("property var sources: [calcSource, locationSource, timerSource, controlSource, dateTimeSource, commandSource, killSource, clipboardSource, snippetSource, emojiSource, sshSource, trashSource, windowSource, folderSource, fileSource, recentSource, webSource, handoffSource, aiSource]"))
   for (const type of ["CalcSource", "LocationSource", "CommandSource", "KillSource", "ClipboardSource", "RecentSource", "FolderSource", "WindowSource", "WebSource", "AiSource"]) {
     assert.match(qml, new RegExp(type + "\\s*\\{"))
   }
@@ -240,7 +240,7 @@ test("layout values come from the resolved settings", () => {
 
 test("the Settings page is injected and its rows write the config", () => {
   assert.ok(qml.includes("SettingsModel.pageRows(SettingsModel.resolve(sourceConfig.config),"))
-  assert.ok(qml.includes("sourceConfig.apply(SettingsModel.applyOption(sourceConfig.config, optionValue))"))
+  assert.ok(qml.includes("var nextConfig = root.applyListOption(sourceConfig.config, optionValue)"))
   assert.ok(qml.includes("sourceConfig.apply(SettingsModel.toggled(sourceConfig.config, row.value))"))
 })
 
@@ -276,7 +276,7 @@ test("a second press of either page button closes its page", () => {
 })
 
 test("typing on a setting's page offers the typed value", () => {
-  assert.ok(qml.includes("SettingsModel.customDisplayRow(root.activeMenu, root.filterText)"))
+  assert.ok(qml.includes("var typed = root.typedRowFor(root.activeMenu, root.filterText)"))
   assert.ok(qml.includes('row.kind === "setting-custom"'))
 })
 
@@ -311,9 +311,9 @@ test("group dividers live in the row, not in ListView section delegates", () => 
 
 test("the typed Use row follows the matching presets; Custom… applies a typed value", () => {
   const append = qml.indexOf("for (var k = 0; k < built.rows.length; k++) displayModel.append(built.rows[k])")
-  const typed = qml.indexOf("var typed = SettingsModel.customDisplayRow(root.activeMenu, root.filterText)")
+  const typed = qml.indexOf("var typed = root.typedRowFor(root.activeMenu, root.filterText)")
   assert.ok(append >= 0 && typed > append)
-  assert.ok(qml.includes("var typedValue = SettingsModel.customDisplayRow(root.activeMenu, root.filterText)"))
+  assert.ok(qml.includes("var typedValue = root.typedRowFor(root.activeMenu, root.filterText)"))
 })
 
 test("the Settings and Sources pages are labelled as foyer's own", () => {

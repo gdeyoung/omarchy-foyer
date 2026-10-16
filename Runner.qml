@@ -10,6 +10,8 @@ import "SettingsModel.js" as SettingsModel
 import "HistoryModel.js" as HistoryModel
 import "VoiceModel.js" as VoiceModel
 import "HelpModel.js" as HelpModel
+import "HandoffsModel.js" as HandoffsModel
+import "SnippetsModel.js" as SnippetsModel
 
 Item {
   id: root
@@ -143,7 +145,7 @@ Item {
   property int categoryWidth: root.showCategories ? Style.space(120) : 0
   property bool searchDivider: false
   property int layoutSerial: 0
-  property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource, aiSource]
+  property var sources: [calcSource, locationSource, timerSource, controlSource, dateTimeSource, commandSource, killSource, clipboardSource, snippetSource, emojiSource, sshSource, trashSource, windowSource, folderSource, fileSource, recentSource, webSource, handoffSource, aiSource]
   property var sourceRows: ({})
   property int searchSerial: 0
   property var sectionLabels: ({})
@@ -603,7 +605,7 @@ Item {
     // On a setting's page, a typed value becomes a "Use …" row after the
     // matching presets, so typing to find a preset and pressing Enter picks
     // the preset, not the raw text.
-    var typed = SettingsModel.customDisplayRow(root.activeMenu, root.filterText)
+    var typed = root.typedRowFor(root.activeMenu, root.filterText)
     if (typed) displayModel.append(typed)
     layoutSerial += 1
 
@@ -744,7 +746,9 @@ Item {
     for (var i = 0; i < root.itemOrder.length; i++) {
       var id = root.itemOrder[i]
       if (id === "sources" || id.indexOf("sources.") === 0 || id === "foyer-settings" || id.indexOf("foyer-settings.") === 0
-          || id === HelpModel.PAGE_ID() || id.indexOf(HelpModel.PAGE_ID() + ".") === 0) continue
+          || id === HelpModel.PAGE_ID() || id.indexOf(HelpModel.PAGE_ID() + ".") === 0
+          || id === "foyer-handoffs" || id.indexOf("foyer-handoffs.") === 0
+          || id === "foyer-snippets" || id.indexOf("foyer-snippets.") === 0) continue
       items[id] = root.items[id]
       order.push(id)
     }
@@ -799,6 +803,42 @@ Item {
       items[help.rows[h].id] = help.rows[h]
       order.push(help.rows[h].id)
     }
+    // The Handoffs page: your prefix → URL rows. Enter removes one; typing
+    // "prefix Label https://…%s" on the page offers an Add row.
+    items["foyer-handoffs"] = { id: "foyer-handoffs", parent: "root", kind: "menu", icon: "\uf35d", iconFont: "", label: "Handoffs",
+      title: "Handoffs", target: "", description: "Your prefixes that open a URL", action: "", provider: "",
+      aliases: ["handoffs", "quicklinks"], when: "", checked: "", order: order.length }
+    order.push("foyer-handoffs")
+    var handoffs = HandoffsModel.resolve(sourceConfig.config)
+    for (var hf = 0; hf < handoffs.length; hf++) {
+      items["foyer-handoffs.h." + handoffs[hf].prefix] = { id: "foyer-handoffs.h." + handoffs[hf].prefix, parent: "foyer-handoffs",
+        kind: "handoff-item", icon: "", iconFont: "", label: handoffs[hf].prefix + " · " + handoffs[hf].label, title: "",
+        target: "", description: handoffs[hf].url, action: "", provider: "", aliases: [], when: "", checked: "",
+        value: handoffs[hf].prefix, order: order.length }
+      order.push("foyer-handoffs.h." + handoffs[hf].prefix)
+    }
+    items["foyer-handoffs.add"] = { id: "foyer-handoffs.add", parent: "foyer-handoffs", kind: "note", icon: "", iconFont: "",
+      label: handoffs.length === 0 ? "Type:  prefix Label https://…%s" : "Enter removes a handoff · type  prefix Label https://…%s  to add", title: "",
+      target: "", description: "", action: "", provider: "", aliases: [], when: "", checked: "", value: "", order: order.length }
+    order.push("foyer-handoffs.add")
+    // The Snippets page: ";name" → text rows. Enter removes one; typing
+    // "name The text" on the page offers an Add row.
+    items["foyer-snippets"] = { id: "foyer-snippets", parent: "root", kind: "menu", icon: "\uf0ea", iconFont: "", label: "Snippets",
+      title: "Snippets", target: "", description: ";name copies text you define", action: "", provider: "",
+      aliases: ["snippets"], when: "", checked: "", order: order.length }
+    order.push("foyer-snippets")
+    var snippets = SnippetsModel.resolve(sourceConfig.config)
+    for (var sn = 0; sn < snippets.length; sn++) {
+      items["foyer-snippets.s." + snippets[sn].name] = { id: "foyer-snippets.s." + snippets[sn].name, parent: "foyer-snippets",
+        kind: "snippet-item", icon: "", iconFont: "", label: ";" + snippets[sn].name + " · " + snippets[sn].text, title: "",
+        target: "", description: "", action: "", provider: "", aliases: [], when: "", checked: "",
+        value: snippets[sn].name, order: order.length }
+      order.push("foyer-snippets.s." + snippets[sn].name)
+    }
+    items["foyer-snippets.add"] = { id: "foyer-snippets.add", parent: "foyer-snippets", kind: "note", icon: "", iconFont: "",
+      label: snippets.length === 0 ? "Type:  name The text to copy" : "Enter removes a snippet · type  name The text  to add", title: "",
+      target: "", description: "", action: "", provider: "", aliases: [], when: "", checked: "", value: "", order: order.length }
+    order.push("foyer-snippets.add")
     root.items = items
     root.itemOrder = order
     root.checkedResults = checked
@@ -840,6 +880,59 @@ Item {
 
   function closePage(page) {
     for (var guard = 0; guard < 16 && root.inPage(page); guard++) root.goBack()
+  }
+
+  // The typed "Use/Add …" row for the active page: Settings' own values,
+  // then the Handoffs and Snippets pages' add rows.
+  function typedRowFor(menu, text) {
+    var built = SettingsModel.customDisplayRow(menu, text)
+    if (built) return built
+    var trimmed = String(text || "").trim()
+    if (menu === "foyer-handoffs") {
+      var handoff = HandoffsModel.parseTyped(trimmed)
+      if (!handoff) return null
+      return { itemId: menu + ".typed", kind: "setting-option", icon: "", iconFont: "", appIcon: "", appId: "",
+        label: "Add " + handoff.prefix + " — " + handoff.label, target: "", detail: handoff.url, path: "",
+        childCount: 0, action: "", provider: "", score: 0, section: "", sourceId: "",
+        value: "handoff-add=" + handoff.prefix + "|" + handoff.label + "|" + handoff.url }
+    }
+    if (menu === "foyer-snippets") {
+      var snippet = SnippetsModel.parseTyped(trimmed)
+      if (!snippet) return null
+      return { itemId: menu + ".typed", kind: "setting-option", icon: "", iconFont: "", appIcon: "", appId: "",
+        label: "Add ;" + snippet.name + " — " + snippet.text, target: "", detail: "Enter copies · Shift+Enter pastes", path: "",
+        childCount: 0, action: "", provider: "", score: 0, section: "", sourceId: "",
+        value: "snippet-add=" + snippet.name + "|" + snippet.text }
+    }
+    return null
+  }
+
+  // handoff-add=/handoff-remove=/snippet-add=/snippet-remove= list edits;
+  // null for anything else (the caller falls back to applyOption).
+  function applyListOption(config, optionValue) {
+    var text = String(optionValue || "")
+    function withList(source, key, list) {
+      var next = JSON.parse(JSON.stringify(source || ({})))
+      next[key] = list
+      return next
+    }
+    if (text.indexOf("handoff-add=") === 0) {
+      var parts = text.slice("handoff-add=".length).split("|")
+      if (parts.length !== 3) return null
+      return withList(config, "handoffs", HandoffsModel.withHandoff(HandoffsModel.resolve(config),
+        { prefix: parts[0], label: parts[1], url: parts[2] }))
+    }
+    if (text.indexOf("handoff-remove=") === 0)
+      return withList(config, "handoffs", HandoffsModel.withoutPrefix(HandoffsModel.resolve(config), text.slice("handoff-remove=".length)))
+    if (text.indexOf("snippet-add=") === 0) {
+      var pair = text.slice("snippet-add=".length).split("|")
+      if (pair.length !== 2) return null
+      return withList(config, "snippets", SnippetsModel.withSnippet(SnippetsModel.resolve(config),
+        { name: pair[0], text: pair[1] }))
+    }
+    if (text.indexOf("snippet-remove=") === 0)
+      return withList(config, "snippets", SnippetsModel.withoutName(SnippetsModel.resolve(config), text.slice("snippet-remove=".length)))
+    return null
   }
 
   function togglePage(page) {
@@ -891,6 +984,11 @@ Item {
     } else if (row.kind === "favorite-item") {
       // Enter on a pinned item in Settings → Favorites unpins it.
       historyStore.remove(String(row.value))
+    } else if (row.kind === "handoff-item") {
+      // Enter removes the handoff; the page rebuilds without it.
+      sourceConfig.apply(root.applyListOption(sourceConfig.config, "handoff-remove=" + row.value))
+    } else if (row.kind === "snippet-item") {
+      sourceConfig.apply(root.applyListOption(sourceConfig.config, "snippet-remove=" + row.value))
     } else if (row.kind === "note") {
       // Informational row.
     } else if (row.kind === "source-toggle") {
@@ -899,7 +997,9 @@ Item {
       // Pick, then return to the Settings page, whose row shows the new value.
       // Read before applying: the config change rebuilds the model under `row`.
       var optionValue = String(row.value)
-      sourceConfig.apply(SettingsModel.applyOption(sourceConfig.config, optionValue))
+      var nextConfig = root.applyListOption(sourceConfig.config, optionValue)
+      if (!nextConfig) nextConfig = SettingsModel.applyOption(sourceConfig.config, optionValue)
+      sourceConfig.apply(nextConfig)
       // The card top is frozen once a page is open; release it so a new
       // Location takes effect now, not on the next open.
       if (optionValue.indexOf("location=") === 0) panel.releaseCardTop()
@@ -910,9 +1010,11 @@ Item {
     } else if (row.kind === "setting-custom") {
       // A reminder; with a valid value typed (which can also match the
       // reminder's own range text), it applies that value.
-      var typedValue = SettingsModel.customDisplayRow(root.activeMenu, root.filterText)
+      var typedValue = root.typedRowFor(root.activeMenu, root.filterText)
       if (typedValue) {
-        sourceConfig.apply(SettingsModel.applyOption(sourceConfig.config, typedValue.value))
+        var typedNext = root.applyListOption(sourceConfig.config, typedValue.value)
+        if (!typedNext) typedNext = SettingsModel.applyOption(sourceConfig.config, typedValue.value)
+        sourceConfig.apply(typedNext)
         root.goBack()
       } else {
         root.customEditing = true
@@ -1055,6 +1157,48 @@ Item {
     config: sourceConfig.config.ai || ({})
     webSearchUrl: sourceConfig.config.webSearchUrl || ""
     onResults: function(serial, rows) { root.acceptSourceRows(aiSource.sourceId, serial, rows) }
+  }
+
+  HandoffSource {
+    id: handoffSource
+    config: sourceConfig.config
+    onResults: function(serial, rows) { root.acceptSourceRows(handoffSource.sourceId, serial, rows) }
+  }
+
+  SnippetSource {
+    id: snippetSource
+    config: sourceConfig.config
+    onResults: function(serial, rows) { root.acceptSourceRows(snippetSource.sourceId, serial, rows) }
+  }
+
+  TimerSource {
+    id: timerSource
+    onResults: function(serial, rows) { root.acceptSourceRows(timerSource.sourceId, serial, rows) }
+  }
+
+  ControlSource {
+    id: controlSource
+    onResults: function(serial, rows) { root.acceptSourceRows(controlSource.sourceId, serial, rows) }
+  }
+
+  DateTimeSource {
+    id: dateTimeSource
+    onResults: function(serial, rows) { root.acceptSourceRows(dateTimeSource.sourceId, serial, rows) }
+  }
+
+  EmojiSource {
+    id: emojiSource
+    onResults: function(serial, rows) { root.acceptSourceRows(emojiSource.sourceId, serial, rows) }
+  }
+
+  TrashSource {
+    id: trashSource
+    onResults: function(serial, rows) { root.acceptSourceRows(trashSource.sourceId, serial, rows) }
+  }
+
+  SshSource {
+    id: sshSource
+    onResults: function(serial, rows) { root.acceptSourceRows(sshSource.sourceId, serial, rows) }
   }
 
   FileView {

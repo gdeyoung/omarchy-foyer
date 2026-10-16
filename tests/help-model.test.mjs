@@ -72,6 +72,6 @@ test("help rows never leak into unrelated root searches, and never compound", as
   // or every config refresh compounds a duplicate.
   const { readFile } = await import("node:fs/promises")
   const qml = await readFile(new URL("../Runner.qml", import.meta.url), "utf8")
-  assert.ok(qml.includes('id === HelpModel.PAGE_ID() || id.indexOf(HelpModel.PAGE_ID() + ".") === 0) continue'),
-    "refreshSourcePage skips old help ids")
+  assert.ok(qml.includes('id === "foyer-snippets" || id.indexOf("foyer-snippets.") === 0) continue'),
+    "refreshSourcePage skips old help and page ids")
 })
