@@ -768,3 +768,20 @@ function buildRows(items, itemOrder, whenResults, checkedResults, activeMenu, qu
   if (rows.length === 0) for (var fb = 0; fb < groups.length; fb++) if (groups[fb] && groups[fb].fallback) appendSource(groups[fb])
   return { activeMenu: active, rows: rows, searchDivider: divider, sectionLabels: labels }
 }
+
+// The start screen's menu group: the Omarchy menu tree's top level, in the
+// same shape HistoryModel.startGroups returns. The launcher opens with the
+// original root menu browsable in the results area; favorites and recents
+// stay above it, and typing swaps the whole list for the live search.
+function startMenuGroup(items, itemOrder, whenResults, checkedResults) {
+  var order = Array.isArray(itemOrder) ? itemOrder : []
+  var rows = []
+  for (var i = 0; i < order.length; i++) {
+    var child = item(items, order[i])
+    if (!child || child.parent !== "root") continue
+    if (!isVisible(items, itemOrder, whenResults, child)) continue
+    rows.push(displayRow(items, itemOrder, checkedResults, child, child.description, child.order, "start:menu"))
+  }
+  if (rows.length === 0) return null
+  return { section: "start:menu", label: "Omarchy", rows: rows }
+}

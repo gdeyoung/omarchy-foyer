@@ -6,7 +6,12 @@ const S = await loadJsModule("SettingsModel.js")
 test("defaults match the tuned launcher", () => {
   assert.deepEqual(S.resolve({}), { width: 420, rows: 9, density: 28, fontScale: 85, hintScale: 100, fontFamily: "", border: 2,
     opacity: 100, radius: -1, accent: "theme", location: "center", recents: 5, recentsOn: false, favoritesShown: 30, favoritesOn: true,
-    fuzzy: true, categories: true, hints: true, about: true })
+    menuOnStart: true, fuzzy: true, categories: true, hints: true, about: true })
+})
+
+test("menuOnStart defaults on and respects an explicit off", () => {
+  assert.equal(S.resolve({}).menuOnStart, true)
+  assert.equal(S.resolve({ settings: { menuOnStart: false } }).menuOnStart, false)
 })
 
 test("resolve keeps valid presets and rejects the rest", () => {

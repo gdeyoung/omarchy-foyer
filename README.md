@@ -308,6 +308,12 @@ which omarunner deliberately does not implement.
 
 This is **gdeyoung's fork** of [thevideinfra/omarunner](https://github.com/thevideinfra/omarunner), kept for custom tweaks.
 
+**Fork behavior — Menu on start:** with nothing typed, the launcher opens with the original
+Omarchy root menu (Apps, Learn, Style, Setup, …) in the results area, under any favorites and
+recents. Arrows walk it, Enter drills into a submenu, and the first keystroke swaps the whole
+list for the live all-source search, KRunner-style. Toggle it with **Menu on start** on the
+Omarunner Settings page; turning it off restores upstream's bare input line.
+
 omarunner is a fork of the `omarchy.menu` plugin from
 [Omarchy](https://github.com/omacom/omarchy) by David Heinemeier Hansson, and
 would not exist without it. `Runner.qml` and `RunnerModel.js` descend from

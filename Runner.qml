@@ -548,8 +548,16 @@ Item {
   function startGroups() {
     var entries = historyStore.history.concat(historyStore.favorites)
     var skip = HistoryModel.unavailableKeys(entries, root.installedAppIds(), historyStore.missing)
-    return HistoryModel.startGroups(historyStore.favorites, historyStore.history,
+    var groups = HistoryModel.startGroups(historyStore.favorites, historyStore.history,
       root.settings.recentsOn ? root.settings.recents : 0, root.settings.favoritesOn ? root.settings.favoritesShown : 0, skip)
+    // The Omarchy menu tree's top level rides under the history groups, so
+    // the launcher opens with the original root menu in the results area and
+    // typing swaps it for the live all-source search.
+    if (root.settings.menuOnStart && !root.hiddenGroups().menu) {
+      var menuGroup = RunnerModel.startMenuGroup(root.items, root.itemOrder, root.whenResults, root.checkedResults)
+      if (menuGroup) groups.push(menuGroup)
+    }
+    return groups
   }
 
   // Ids of the installed applications, or [] while the list is still loading.

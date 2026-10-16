@@ -56,6 +56,7 @@ function TOGGLES() {
   return [
     { key: "fuzzy", label: "Fuzzy matching" },
     { key: "categories", label: "Category column" },
+    { key: "menuOnStart", label: "Menu on start" },
     { key: "hints", label: "Ctrl+number hints" },
     { key: "favoritesOn", label: "Show on start", under: "favorites" },
     { key: "recentsOn", label: "Show on start", under: "launches" },
@@ -64,7 +65,7 @@ function TOGGLES() {
 }
 
 function defaults() {
-  return { width: 420, rows: 9, density: 28, fontScale: 85, hintScale: 100, fontFamily: "", border: 2, opacity: 100, radius: -1, accent: "theme", location: "center", recents: 5, recentsOn: false, favoritesShown: 30, favoritesOn: true, fuzzy: true, categories: true, hints: true, about: true }
+  return { width: 420, rows: 9, density: 28, fontScale: 85, hintScale: 100, fontFamily: "", border: 2, opacity: 100, radius: -1, accent: "theme", location: "center", recents: 5, recentsOn: false, favoritesShown: 30, favoritesOn: true, menuOnStart: true, fuzzy: true, categories: true, hints: true, about: true }
 }
 
 function choiceFor(key) {
