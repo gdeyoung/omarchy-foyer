@@ -743,7 +743,8 @@ Item {
     var order = []
     for (var i = 0; i < root.itemOrder.length; i++) {
       var id = root.itemOrder[i]
-      if (id === "sources" || id.indexOf("sources.") === 0 || id === "foyer-settings" || id.indexOf("foyer-settings.") === 0) continue
+      if (id === "sources" || id.indexOf("sources.") === 0 || id === "foyer-settings" || id.indexOf("foyer-settings.") === 0
+          || id === HelpModel.PAGE_ID() || id.indexOf(HelpModel.PAGE_ID() + ".") === 0) continue
       items[id] = root.items[id]
       order.push(id)
     }

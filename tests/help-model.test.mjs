@@ -49,3 +49,29 @@ test("the runner wires the help page, button and F1", async () => {
   assert.ok(qml.includes("anchors.right: gearButton.left"))
   assert.ok(qml.includes("anchors.right: helpButton.left"))
 })
+
+test("help rows never leak into unrelated root searches, and never compound", async () => {
+  const { loadRunnerModel } = await import("./helpers/load-runner-model.mjs")
+  const R = await loadRunnerModel()
+  const parsed = R.parseMenuJsonc('{ "root": { "label": "Omarchy" }, "apps": { "label": "Apps" } }')
+  const { items, itemOrder } = R.mergeMenuSources(parsed, [])
+  items[H.PAGE_ID()] = { id: H.PAGE_ID(), parent: "root", kind: "menu", icon: "?", label: "Foyer Help",
+    title: "Foyer Help", target: "", description: "What you can type, with examples", action: "", provider: "",
+    aliases: ["help", "cheatsheet"], when: "", checked: "", order: itemOrder.length }
+  itemOrder.push(H.PAGE_ID())
+  for (const r of H.pageRows().rows) { r.order = itemOrder.length; items[r.id] = r; itemOrder.push(r.id) }
+  // "help" finds the page exactly once...
+  const forHelp = R.buildRows(items, itemOrder, {}, {}, "root", "help").rows.filter(r => r.label === "Foyer Help")
+  assert.equal(forHelp.length, 1)
+  // ...and the example rows (a "fire" example, a "voice" heading) do not
+  // surface in a root search for those words.
+  const forFire = R.buildRows(items, itemOrder, {}, {}, "root", "fire").rows
+  assert.equal(forFire.filter(r => String(r.itemId).indexOf(H.PAGE_ID() + ".") === 0).length, 0)
+
+  // The refresh in Runner.qml must drop prior help rows before re-adding them,
+  // or every config refresh compounds a duplicate.
+  const { readFile } = await import("node:fs/promises")
+  const qml = await readFile(new URL("../Runner.qml", import.meta.url), "utf8")
+  assert.ok(qml.includes('id === HelpModel.PAGE_ID() || id.indexOf(HelpModel.PAGE_ID() + ".") === 0) continue'),
+    "refreshSourcePage skips old help ids")
+})
