@@ -138,6 +138,12 @@ test("datetime: the real date command answers (live)", async () => {
   const argv = DateTime.dateArgv("oct 20 + 3 days")
   const { stdout } = await run(argv[0], argv.slice(1))
   assert.match(stdout, /Oct 23, 2026/)
+  // "in N units" must reach date -d without the word "in", which it rejects —
+  // the silent fallback prints today's date instead.
+  assert.equal(DateTime.dateArgv("in 2 weeks")[2].includes("'in 2 weeks'"), false)
+  const inArgv = DateTime.dateArgv("in 2 weeks")
+  const later = await run(inArgv[0], inArgv.slice(1))
+  assert.match(later.stdout, /Oct 30, 2026/)
 })
 
 // -- Emoji

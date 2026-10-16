@@ -21,7 +21,10 @@ function dateArgv(query) {
       '[ -n "$z" ] || exit 3; tz=$(basename "$(dirname "$z")")/$(basename "$z"); ' +
       'printf "%s\\t%s\\n" "$(TZ=$z date "+%l:%M %p")" "$(TZ=$z date +%Z)"']
   }
-  return ["bash", "-c", 'date -d ' + sh(text) + ' "+%a %b %e, %Y\\t%l:%M %p" 2>/dev/null || date "+%a %b %e, %Y\\t%l:%M %p"']
+  // GNU date rejects the word "in" ("date -d 'in 2 weeks'" is invalid), so
+  // hand it "2 weeks"; without it the fallback would print today's date.
+  var body = text.replace(/^in\s+/i, "")
+  return ["bash", "-c", 'date -d ' + sh(body) + ' "+%a %b %e, %Y\\t%l:%M %p" 2>/dev/null || date "+%a %b %e, %Y\\t%l:%M %p"']
 }
 
 function sh(text) { return "'" + String(text).replace(/'/g, "'\\''") + "'" }
