@@ -22,7 +22,7 @@ Item {
   readonly property string version: root.fileVersion || String(root.manifest && root.manifest.version || "")
 
   // Plugin lifecycle hooks. The host calls open(payloadJson) after
-  // `omarchy-shell shell summon videinfra.omarunner ...` and close() when hidden.
+  // `omarchy-shell shell summon gdeyoung.omarunner ...` and close() when hidden.
   property string pendingInitialMenu: "root"
 
   function open(payloadJson) {
@@ -759,7 +759,7 @@ Item {
     // Resolved here, not via root.settings: this runs from onConfigChanged at
     // startup, before that binding has a value.
     // "Keybindings…" opens the setup wizard in a floating terminal.
-    var setup = Quickshell.env("HOME") + "/.config/omarchy/plugins/videinfra.omarunner/bin/omarunner-setup"
+    var setup = Quickshell.env("HOME") + "/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup"
     var page = SettingsModel.pageRows(SettingsModel.resolve(sourceConfig.config),
       "omarchy-launch-floating-terminal-with-presentation " + Util.shellQuote(setup), historyStore.favorites)
     for (var p = 0; p < page.rows.length; p++) {
@@ -1054,7 +1054,7 @@ Item {
   // ----------------------------------------------------------- route surface
   //
   // The menu is opened through the standard plugin lifecycle:
-  // `omarchy-shell shell summon videinfra.omarunner '{"menu":"system"}'`.
+  // `omarchy-shell shell summon gdeyoung.omarunner '{"menu":"system"}'`.
   // Callers may pass a real id (`system`, `setup.power`) or an alias declared
   // in JSONC (`power`, `reminder-set`). Unknown strings fall through to the
   // id-as-route behavior so misspellings still attempt to open the literal id.
@@ -1516,7 +1516,7 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/thevideinfra/omarunner"))
+                onClicked: root.applySelected("github", "xdg-open " + Util.shellQuote("https://github.com/gdeyoung/omarunner"))
               }
             }
           }

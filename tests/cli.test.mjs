@@ -20,22 +20,22 @@ async function cliRun(args) {
 
 test("toggle with no route defaults to root", async () => {
   const { stdout } = await cliRun(["toggle"])
-  assert.equal(stdout.trim(), 'shell toggle videinfra.omarunner {"menu":"root"}')
+  assert.equal(stdout.trim(), 'shell toggle gdeyoung.omarunner {"menu":"root"}')
 })
 
 test("no verb at all defaults to toggle root", async () => {
   const { stdout } = await cliRun([])
-  assert.equal(stdout.trim(), 'shell toggle videinfra.omarunner {"menu":"root"}')
+  assert.equal(stdout.trim(), 'shell toggle gdeyoung.omarunner {"menu":"root"}')
 })
 
 test("summon passes the route through", async () => {
   const { stdout } = await cliRun(["summon", "apps"])
-  assert.equal(stdout.trim(), 'shell summon videinfra.omarunner {"menu":"apps"}')
+  assert.equal(stdout.trim(), 'shell summon gdeyoung.omarunner {"menu":"apps"}')
 })
 
 test("close needs no payload", async () => {
   const { stdout } = await cliRun(["close"])
-  assert.equal(stdout.trim(), "shell hide videinfra.omarunner")
+  assert.equal(stdout.trim(), "shell hide gdeyoung.omarunner")
 })
 
 test("an unknown verb exits 2", async () => {

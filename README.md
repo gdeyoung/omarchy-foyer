@@ -58,12 +58,12 @@ omarunner is a standard Omarchy shell plugin. Add it, then run the setup step
 to choose its keys:
 
 ```bash
-omarchy plugin add https://github.com/thevideinfra/omarunner.git --enable
-~/.config/omarchy/plugins/videinfra.omarunner/bin/omarunner-setup
+omarchy plugin add https://github.com/gdeyoung/omarunner.git --enable
+~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup
 ```
 
 The first command clones the plugin into
-`~/.config/omarchy/plugins/videinfra.omarunner`, validates it and enables it. The
+`~/.config/omarchy/plugins/gdeyoung.omarunner`, validates it and enables it. The
 second asks for the keys (see Keybindings below).
 
 Optional packages (the setup step names any that are missing):
@@ -80,7 +80,7 @@ sudo pacman -S libqalculate fzf
 ## Updating
 
 ```bash
-omarchy plugin update videinfra.omarunner
+omarchy plugin update gdeyoung.omarunner
 ```
 
 Your keybindings survive an update. If you ever remove and re-add the plugin,
@@ -93,7 +93,7 @@ lives in the plugin folder and goes with it.
 A plugin cannot declare keys itself, so omarunner has a setup step:
 
 ```bash
-~/.config/omarchy/plugins/videinfra.omarunner/bin/omarunner-setup
+~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-setup
 ```
 
 It asks which key opens omarunner (default `SUPER + SPACE`, which replaces
@@ -122,7 +122,7 @@ instead, then run `hyprctl reload`:
 -- omarunner replaces the Omarchy root menu on SUPER+SPACE (was: Omarchy menu).
 -- The bar's Omarchy logo button and SUPER+CTRL+SPACE (background switcher)
 -- stay on omarchy-menu.
-local omarunner = "$HOME/.config/omarchy/plugins/videinfra.omarunner/bin/omarunner"
+local omarunner = "$HOME/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner"
 hl.unbind("SUPER + SPACE")
 o.bind("SUPER + SPACE", "omarunner", omarunner .. " toggle")
 hl.unbind("SUPER + ALT + SPACE")
@@ -147,8 +147,8 @@ plus `sources` and `omarunner-settings` for omarunner's own pages. `setup` and
 Take the keys out first, then remove the plugin:
 
 ```bash
-~/.config/omarchy/plugins/videinfra.omarunner/bin/omarunner-apply --remove
-omarchy plugin remove videinfra.omarunner
+~/.config/omarchy/plugins/gdeyoung.omarunner/bin/omarunner-apply --remove
+omarchy plugin remove gdeyoung.omarunner
 ```
 
 `omarunner-apply --remove` deletes the loader line from `hyprland.lua`, the
@@ -163,7 +163,7 @@ Clone the repo and install it from the clone, as a user would, so you test what
 users get:
 
 ```bash
-git clone https://github.com/thevideinfra/omarunner.git ~/Projects/omarunner
+git clone https://github.com/gdeyoung/omarunner.git ~/Projects/omarunner
 omarchy plugin add ~/Projects/omarunner --enable
 ```
 
@@ -173,7 +173,7 @@ clone, so uncommitted edits do not reach the installed plugin:
 
 ```bash
 cd ~/Projects/omarunner && git commit -am "..."
-omarchy plugin update videinfra.omarunner
+omarchy plugin update gdeyoung.omarunner
 omarchy-restart-shell
 ```
 
@@ -305,6 +305,8 @@ switcher, and the `omarchy-menu-select` / `omarchy-menu-input` dmenu helpers,
 which omarunner deliberately does not implement.
 
 ## Credits
+
+This is **gdeyoung's fork** of [thevideinfra/omarunner](https://github.com/thevideinfra/omarunner), kept for custom tweaks.
 
 omarunner is a fork of the `omarchy.menu` plugin from
 [Omarchy](https://github.com/omacom/omarchy) by David Heinemeier Hansson, and

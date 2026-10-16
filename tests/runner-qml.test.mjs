@@ -9,7 +9,7 @@ const qml = await readFile(join(root, "Runner.qml"), "utf8")
 const manifest = JSON.parse(await readFile(join(root, "manifest.json"), "utf8"))
 
 test("manifest declares the runner plugin", () => {
-  assert.equal(manifest.id, "videinfra.omarunner")
+  assert.equal(manifest.id, "gdeyoung.omarunner")
   assert.deepEqual(manifest.kinds, ["menu"])
   assert.equal(manifest.entryPoints.menu, "Runner.qml")
 })
@@ -348,7 +348,7 @@ test("edge padding is tight: card inset 4, row insets 4 left and 6 right", () =>
 
 test("the Settings page passes the keybinding wizard command to its Keybindings… row", () => {
   assert.ok(qml.includes("omarchy-launch-floating-terminal-with-presentation \" + Util.shellQuote(setup)"))
-  assert.ok(qml.includes("videinfra.omarunner/bin/omarunner-setup"))
+  assert.ok(qml.includes("gdeyoung.omarunner/bin/omarunner-setup"))
 })
 
 test("recent files are checked for existence before they are offered", async () => {
@@ -377,7 +377,7 @@ test("the accent colour comes from the Accent setting and colours the highlights
 test("the version pill and GitHub icon sit in the header beside the gear, on the Settings page only", () => {
   assert.ok(qml.includes("id: aboutBox"))
   assert.ok(qml.includes('visible: root.settings.about && root.version !== "" && gearButton.active'))
-  assert.ok(qml.includes("https://github.com/thevideinfra/omarunner"))
+  assert.ok(qml.includes("https://github.com/gdeyoung/omarunner"))
   assert.ok(qml.includes("anchors.right: aboutBox.visible ? aboutBox.left : gearButton.left"))
   assert.ok(qml.includes("root.fileVersion || String(root.manifest && root.manifest.version"))
   assert.ok(qml.includes('Qt.resolvedUrl("manifest.json")'))

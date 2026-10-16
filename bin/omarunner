@@ -4,7 +4,7 @@
 # passed to the plugin as a JSON payload.
 set -euo pipefail
 
-PLUGIN_ID="videinfra.omarunner"
+PLUGIN_ID="gdeyoung.omarunner"
 
 verb="${1-toggle}"
 route="${2-root}"
