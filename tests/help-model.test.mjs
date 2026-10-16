@@ -21,7 +21,7 @@ test("headings introduce grouped examples with dividers", () => {
   const { rows } = H.pageRows()
   const headings = rows.filter(r => r.section === "" && r.description === "")
   assert.deepEqual(headings.map(r => r.label),
-    ["Opening and moving", "Quick answers", "Hand-offs to the right room", "Finding things", "Voice — dictate it"])
+    ["Opening and moving", "Quick answers", "Hand-offs to the right room", "Everyday wins", "Finding things", "Voice — dictate it"])
   const examples = rows.filter(r => r.section !== "")
   for (const e of examples) {
     assert.match(e.section, /^group:help\d$/)
