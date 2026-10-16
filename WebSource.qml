@@ -9,7 +9,7 @@ Item {
   id: root
   property string sourceId: "web"
   property string groupLabel: "Web"
-  property string hint: "dd · gg · yt · wiki + query · or when nothing else matches"
+  property string hint: "br · dd · gg · yt · wiki + query · or when nothing else matches"
   property int maxRows: 1
   property bool enabled: true
   property bool fallback: true

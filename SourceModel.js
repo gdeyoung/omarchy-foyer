@@ -2,7 +2,7 @@
 // registered in Runner.qml (root.sources); nothing here names one, so a source
 // absent from the config is enabled and only an explicit false disables it.
 function defaultConfig() {
-  return { sources: ({}), webSearchUrl: "https://duckduckgo.com/?q=" }
+  return { sources: ({}), webSearchUrl: "https://search.brave.com/search?q=", ai: ({}) }
 }
 
 function parseObject(rawText) {
@@ -26,6 +26,12 @@ function parseConfig(rawText) {
   for (var id in given) if (typeof given[id] === "boolean") sources[id] = given[id]
   out.sources = sources
   if (typeof out.webSearchUrl !== "string" || !out.webSearchUrl) out.webSearchUrl = base.webSearchUrl
+  var ai = parsed.ai && typeof parsed.ai === "object" && !Array.isArray(parsed.ai) ? parsed.ai : ({})
+  var aiOut = ({})
+  if (typeof ai.baseUrl === "string" && ai.baseUrl) aiOut.baseUrl = ai.baseUrl
+  if (typeof ai.apiKey === "string" && ai.apiKey) aiOut.apiKey = ai.apiKey
+  if (typeof ai.model === "string" && ai.model) aiOut.model = ai.model
+  out.ai = aiOut
   return out
 }
 

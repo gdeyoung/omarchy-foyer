@@ -212,8 +212,8 @@ test("prefix sources claim their queries; leading sources lead", async () => {
 })
 
 test("the runner registers every source and gives claimed queries to their source alone", () => {
-  assert.ok(qml.includes("property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource]"))
-  for (const type of ["CalcSource", "LocationSource", "CommandSource", "KillSource", "ClipboardSource", "RecentSource", "FolderSource", "WindowSource", "WebSource"]) {
+  assert.ok(qml.includes("property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource, aiSource]"))
+  for (const type of ["CalcSource", "LocationSource", "CommandSource", "KillSource", "ClipboardSource", "RecentSource", "FolderSource", "WindowSource", "WebSource", "AiSource"]) {
     assert.match(qml, new RegExp(type + "\\s*\\{"))
   }
   assert.match(qml, /function sourceClaims\(source, query\)/)

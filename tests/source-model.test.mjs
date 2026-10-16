@@ -9,14 +9,20 @@ const M = await loadJsModule("SourceModel.js")
 // "true unless explicitly false" — a source absent from the config, or absent
 // from a stale config written before it existed, is enabled by default.
 
-test("default config has no per-source overrides and sets DuckDuckGo", () => {
-  assert.deepEqual(M.defaultConfig(), { sources: {}, webSearchUrl: "https://duckduckgo.com/?q=" })
+test("default config has no per-source overrides and sets Brave", () => {
+  assert.deepEqual(M.defaultConfig(), { sources: {}, webSearchUrl: "https://search.brave.com/search?q=", ai: {} })
 })
 
 test("parseConfig keeps a boolean source flag from a partial file", () => {
   const c = M.parseConfig('{"sources":{"files":false}}')
   assert.equal(c.sources.files, false)
-  assert.equal(c.webSearchUrl, "https://duckduckgo.com/?q=")
+  assert.equal(c.webSearchUrl, "https://search.brave.com/search?q=")
+})
+
+test("parseConfig carries the ai provider section through", () => {
+  const c = M.parseConfig('{"ai":{"baseUrl":"http://x:4000/v1","apiKey":"sk-1","model":"local-fast","junk":true}}')
+  assert.deepEqual(c.ai, { baseUrl: "http://x:4000/v1", apiKey: "sk-1", model: "local-fast" })
+  assert.deepEqual(M.parseConfig("{}").ai, {})
 })
 
 test("parseConfig keeps unknown keys so a hand edit survives a toggle", () => {

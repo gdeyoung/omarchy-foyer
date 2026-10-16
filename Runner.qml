@@ -8,6 +8,7 @@ import "RunnerModel.js" as RunnerModel
 import "SourceModel.js" as SourceModel
 import "SettingsModel.js" as SettingsModel
 import "HistoryModel.js" as HistoryModel
+import "VoiceModel.js" as VoiceModel
 
 Item {
   id: root
@@ -141,7 +142,7 @@ Item {
   property int categoryWidth: root.showCategories ? Style.space(120) : 0
   property bool searchDivider: false
   property int layoutSerial: 0
-  property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource]
+  property var sources: [calcSource, locationSource, commandSource, killSource, clipboardSource, windowSource, folderSource, fileSource, recentSource, webSource, aiSource]
   property var sourceRows: ({})
   property int searchSerial: 0
   property var sectionLabels: ({})
@@ -655,7 +656,9 @@ Item {
 
   function setFilter(nextFilter) {
     panel.freezeCardTop()
-    root.filterText = nextFilter
+    // Voice first: dictated phrases ("brave search for x", "ask ai x", "br :
+    // x") become the prefixes the sources claim, so VoxType works unquoted.
+    root.filterText = VoiceModel.normalize(nextFilter)
     // Typing keeps the current source rows on screen until the fresh reply
     // replaces them; the serial bump drops any reply for an older query.
     // Each source applies its own minimum query length.
@@ -1024,6 +1027,13 @@ Item {
     id: webSource
     searchUrl: sourceConfig.config.webSearchUrl || ""
     onResults: function(serial, rows) { root.acceptSourceRows(webSource.sourceId, serial, rows) }
+  }
+
+  AiSource {
+    id: aiSource
+    config: sourceConfig.config.ai || ({})
+    webSearchUrl: sourceConfig.config.webSearchUrl || ""
+    onResults: function(serial, rows) { root.acceptSourceRows(aiSource.sourceId, serial, rows) }
   }
 
   FileView {

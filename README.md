@@ -236,11 +236,32 @@ Folders, Files and Recent. A search that matches nothing offers a web search.
 | Command | `> htop` | run in a terminal | run in the background |
 | Kill | `kill firefox` | `kill` (SIGTERM) | `kill -KILL` |
 | Clipboard | `cb`, `cb git`, `cb scr` (images), `cb list` | paste into the previous window | copy only |
-| Web | `dd query`, `gg query`, `yt query`, `wiki query` | open in the browser | copy the URL |
+| Web | `br query`, `dd query`, `gg query`, `yt query`, `wiki query` | open in the browser | copy the URL |
+| AI answers | `ai question` (or `? question`) | copy the answer | — |
 
-Prefixes (`cb`, `>`, `kill`, `recent`, `dd`/`gg`/`yt`/`wiki` followed by a query)
+Prefixes (`cb`, `>`, `kill`, `recent`, `br`/`dd`/`gg`/`yt`/`wiki`/`ai` followed by a query)
 hand the whole list to that one source. Clipboard history appears only behind `cb`, so
 copied secrets never show in an ordinary search.
+
+**AI answers** ask one configured OpenAI-compatible endpoint once — the answer
+is a result row (Enter copies it), with a second row handing the same question
+to your web browser for the longer read. Configure it in
+`~/.config/omarchy/foyer.json`:
+
+```json
+"ai": { "baseUrl": "http://localhost:4000/v1", "apiKey": "sk-…", "model": "…" }
+```
+
+Any OpenAI-compatible endpoint works (LiteLLM, ollama, llama.cpp, a cloud
+provider). Without the section, `ai` is just an ordinary search. The key is
+written to `~/.local/state/foyer/ai-curl.conf` (mode 600) and the request body
+travels over stdin, so neither the key nor the question appears in a process
+listing. There is no chat: one question, one answer, no history.
+
+**Voice-friendly queries.** Dictating into the box works without saying
+"colon": *brave search for arch wifi*, *google search nim vs rust*, *ask ai why
+is dns slow*, *search the web for arch linux*, and dictated colons (*br colon
+x*) all land in the right source.
 
 Folder names forgive case and small typos. With fuzzy matching on (the
 default), letters typed in order also match: `frfox` finds Firefox, and files are
@@ -303,8 +324,8 @@ of the list. Favorites and history live in `~/.local/state/foyer/history.json`,
 in a private directory, because it stores the commands of launched menu actions.
 
 Both pages are stored in `~/.config/omarchy/foyer.json` (`sources`,
-`settings`, and `webSearchUrl` for the fallback web search, DuckDuckGo by
-default). Hand edits to an existing file are picked up while the shell runs; if
+`settings`, `webSearchUrl` for the fallback web search — Brave by
+default — and `ai` for the AI provider). Hand edits to an existing file are picked up while the shell runs; if
 the file is first created after the shell started, restart the shell (or toggle
 something once) for edits to be watched. If the file is not valid JSON,
 foyer uses defaults and, on the next change, copies the broken file to

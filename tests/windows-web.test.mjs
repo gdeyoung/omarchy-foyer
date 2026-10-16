@@ -56,14 +56,19 @@ test("keyword rows search their site, encoded", () => {
   const [row] = Web.rowsFor("gg a&b c", "")
   assert.equal(row.label, "Search Google for “a&b c”")
   assert.equal(row.value, "https://www.google.com/search?q=a%26b%20c")
+  const [brave] = Web.rowsFor("br arch wifi", "")
+  assert.equal(brave.label, "Search Brave for “arch wifi”")
+  assert.equal(brave.value, "https://search.brave.com/search?q=arch%20wifi")
   // A bare keyword is an ordinary query: it only gets the fallback row.
-  assert.equal(Web.rowsFor("dd ", "")[0].label, "Search DuckDuckGo for “dd”")
+  assert.equal(Web.rowsFor("dd ", "")[0].label, "Search Brave for “dd”")
 })
 
 test("other queries get the fallback row on the configured engine", () => {
-  const [row] = Web.rowsFor("omarchy themes", "https://duckduckgo.com/?q=")
-  assert.equal(row.label, "Search DuckDuckGo for “omarchy themes”")
-  assert.equal(row.value, "https://duckduckgo.com/?q=omarchy%20themes")
+  const [row] = Web.rowsFor("omarchy themes", "")
+  assert.equal(row.label, "Search Brave for “omarchy themes”")
+  assert.equal(row.value, "https://search.brave.com/search?q=omarchy%20themes")
+  const [dd] = Web.rowsFor("omarchy themes", "https://duckduckgo.com/?q=")
+  assert.equal(dd.label, "Search the web for “omarchy themes”")
   const [custom] = Web.rowsFor("x y", "https://search.example/?q=")
   assert.equal(custom.label, "Search the web for “x y”")
   assert.deepEqual(Web.rowsFor("a", ""), [])
