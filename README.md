@@ -79,8 +79,19 @@ sudo pacman -S libqalculate fzf
 
 ## Updating
 
-```bash
+```
 omarchy plugin update gdeyoung.omarunner
+```
+
+After the update, the shell's file watcher starts a live reload of the changed
+plugin. Give it a couple of seconds **before** running `omarchy restart shell` —
+an IPC quit landing mid-reload trips a quickshell teardown bug (SIGSEGV in a
+dangling engine-generation pointer; quickshell issue #1020, also reproduced on
+stock Omarchy as omarchy #8547). One crash dialog is cosmetic — the fresh
+instance runs the updated code:
+
+```
+omarchy plugin update gdeyoung.omarunner --yes && sleep 3 && omarchy restart shell
 ```
 
 Your keybindings survive an update. If you ever remove and re-add the plugin,
