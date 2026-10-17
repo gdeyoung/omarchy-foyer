@@ -384,6 +384,31 @@ KRunner and the COSMIC launcher.
 
 MIT, see [`LICENSE`](LICENSE). Third-party notices are in [`NOTICE`](NOTICE).
 
+## What Foyer runs
+
+Foyer is unsandboxed Quickshell QML. For transparency — and for marketplace
+security reviewers — every external command it executes:
+
+| Command | Why |
+|---|---|
+| `qalc` (libqalculate) | calculator and unit conversion — no `eval` anywhere |
+| `bash -c` + GNU `date`, `find /usr/share/zoneinfo` | date math (`in 2 weeks`) and city time zones |
+| `omarchy reminder N "msg"` | timers and reminders |
+| `brightnessctl`, `wpctl` | `bright 40`, `vol 20`, `mute` |
+| `gio trash --empty` | emptying the trash (two-step confirm in the UI) |
+| `wl-copy` | copying answers, emoji, snippets, dates |
+| `wtype` | pasting a snippet into the previous window (Shift+Enter) |
+| `xdg-open` | web searches, handoffs, folders, files |
+| `ssh` in the default terminal | `ssh host` rows |
+| `curl` | the one AI request — Authorization header lives in a chmod-600 `--config` file, JSON body via stdin, nothing private in argv |
+| `voxtype record toggle` | the mic button, when VoxType is installed |
+| `hyprctl clients -j` / `hyprctl dispatch` | listing and focusing open windows |
+| `kill` | the `kill` prefix (SIGTERM, or SIGKILL with Shift+Enter) |
+| Omarchy helpers (`omarchy-launch-terminal`, `omarchy-clipboard-*`, `omarchy-default-*`, `omarchy-dns`) | the stock launcher plumbing inherited from `omarchy.menu` |
+
+Network access is limited to `curl` against the AI endpoint you configure.
+Nothing phones home; there are no telemetry or update checks.
+
 ## Verified on
 
 Omarchy 4.0.4-1.
