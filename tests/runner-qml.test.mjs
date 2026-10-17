@@ -215,6 +215,14 @@ test("clipboard copies never carry their text in a process argument", async () =
   const copy = await readFile(join(root, "Copy.js"), "utf8")
   assert.ok(copy.includes("base64 -d"), "Copy.js should decode stdin base64")
   assert.equal(copy.includes('"--"'), false, "Copy.js must not pass text as an argument")
+  // CopyRunner must actually expose run() and delegate to Copy.run — a
+  // component with the right comment but no function is a live TypeError
+  // (caught by a marketplace maintainer review, 2026-10-17).
+  const runner = await readFile(join(root, "CopyRunner.qml"), "utf8")
+  assert.ok(/function run\(text\)\s*\{\s*Copy\.run\(proc, text\)/.test(runner.replace(/\n\s+/g, " ")),
+    "CopyRunner.qml must define run(text) calling Copy.run(proc, text)")
+  const copyjs = await readFile(join(root, "Copy.js"), "utf8")
+  assert.ok(/function run\(proc, text\)/.test(copyjs), "Copy.js must define run(proc, text)")
 })
 
 test("prefix sources claim their queries; leading sources lead", async () => {

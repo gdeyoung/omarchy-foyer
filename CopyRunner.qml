@@ -9,6 +9,9 @@ import "Copy.js" as Copy
 Item {
   id: root
 
+  // The sources' single entry point — Copy.run drives the Process below.
+  function run(text) { Copy.run(proc, text) }
+
   Process {
     id: proc
     property string stdinData: ""
