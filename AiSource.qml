@@ -50,8 +50,10 @@ Item {
   function activate(value, modifiers) {
     var text = String(value || "")
     if (text.indexOf("web:") === 0) Util.execArgv(["xdg-open", text.slice(4)])
-    else if (text !== "") Util.execArgv(["wl-copy", "--", text])
+    else copy.run(text)
   }
+
+  CopyRunner { id: copy }
 
   Process {
     id: confWriter

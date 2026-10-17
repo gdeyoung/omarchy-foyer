@@ -22,7 +22,9 @@ Item {
 
   // Enter opens the search in the default browser; Shift+Enter copies the URL.
   function activate(value, modifiers) {
-    if (modifiers & Qt.ShiftModifier) Util.execArgv(["wl-copy", "--", String(value)])
+    if (modifiers & Qt.ShiftModifier) copy.run(value)
     else Util.execArgv(WebModel.openArgv(value))
   }
+
+  CopyRunner { id: copy }
 }

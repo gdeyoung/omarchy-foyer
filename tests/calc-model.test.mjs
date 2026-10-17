@@ -69,7 +69,9 @@ test("row copies the bare result", () => {
   assert.equal(r.label, "= 4")
   assert.equal(r.detail, "2+2")
   assert.equal(r.value, "4")
-  assert.deepEqual(C.copyArgv("4"), ["wl-copy", "--", "4"])
+  // Copies go through CopyRunner (stdin, never argv) — the model no longer
+  // builds a wl-copy argv vector.
+  assert.equal(C.copyArgv, undefined)
 })
 
 test("qalcExpression rewrites launcher shorthand", () => {

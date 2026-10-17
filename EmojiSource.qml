@@ -20,5 +20,7 @@ Item {
 
   function cancel() {}
 
-  function activate(value, modifiers) { Util.execArgv(["wl-copy", "--", String(value)]) }
+  function activate(value, modifiers) { copy.run(value) }
+
+  CopyRunner { id: copy }
 }

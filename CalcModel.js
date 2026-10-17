@@ -171,11 +171,9 @@ function row(result, query) {
   }
 }
 
-function copyArgv(value) { return value ? ["wl-copy", "--", String(value)] : [] }
-
 if (typeof module !== "undefined") {
   module.exports = {
     isArithmetic: isArithmetic, needsQalcFallback: needsQalcFallback, wantsQalc: wantsQalc, qalcExpression: qalcExpression, qalcArgs: qalcArgs, parseQalc: parseQalc,
-    evaluate: evaluate, format: format, row: row, copyArgv: copyArgv
+    evaluate: evaluate, format: format, row: row
   }
 }

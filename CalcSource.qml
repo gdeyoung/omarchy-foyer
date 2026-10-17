@@ -32,10 +32,9 @@ Item {
 
   function cancel() { runner.cancel() }
 
-  function activate(value, modifiers) {
-    var argv = CalcModel.copyArgv(value)
-    if (argv.length) Util.execArgv(argv)
-  }
+  function activate(value, modifiers) { copy.run(value) }
+
+  CopyRunner { id: copy }
 
   LatestProcess {
     id: runner

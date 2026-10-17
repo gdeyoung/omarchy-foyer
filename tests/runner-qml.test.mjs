@@ -194,12 +194,27 @@ test("every source file implements the source interface", async () => {
 })
 
 test("sources built from user text run argv, never a shell string", async () => {
-  for (const file of ["CalcSource.qml", "CommandSource.qml", "KillSource.qml", "ClipboardSource.qml", "FolderSource.qml",
+  for (const file of ["CommandSource.qml", "KillSource.qml", "ClipboardSource.qml", "FolderSource.qml",
     "WindowSource.qml", "WebSource.qml"]) {
     const src = await readFile(join(root, file), "utf8")
     assert.ok(src.includes("Util.execArgv("), `${file} should use Util.execArgv`)
     assert.equal(src.includes("Util.execDetached("), false, `${file} should not use Util.execDetached`)
   }
+})
+
+test("clipboard copies never carry their text in a process argument", async () => {
+  // Every source that copies uses CopyRunner (text rides stdin as one base64
+  // line); nothing builds a `wl-copy -- <text>` argv vector anymore.
+  const copiers = ["AiSource.qml", "SnippetSource.qml", "EmojiSource.qml", "DateTimeSource.qml",
+    "WebSource.qml", "LocationSource.qml", "CalcSource.qml"]
+  for (const file of copiers) {
+    const src = await readFile(join(root, file), "utf8")
+    assert.ok(src.includes("CopyRunner { id: copy }"), `${file} should embed a CopyRunner`)
+    assert.equal(src.includes('"wl-copy"'), false, `${file} must not build a wl-copy argv`)
+  }
+  const copy = await readFile(join(root, "Copy.js"), "utf8")
+  assert.ok(copy.includes("base64 -d"), "Copy.js should decode stdin base64")
+  assert.equal(copy.includes('"--"'), false, "Copy.js must not pass text as an argument")
 })
 
 test("prefix sources claim their queries; leading sources lead", async () => {

@@ -21,9 +21,9 @@ Item {
 
   function cancel() { runner.cancel() }
 
-  function activate(value, modifiers) {
-    if (String(value || "") !== "") Util.execArgv(["wl-copy", "--", String(value)])
-  }
+  function activate(value, modifiers) { copy.run(value) }
+
+  CopyRunner { id: copy }
 
   LatestProcess {
     id: runner

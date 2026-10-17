@@ -35,7 +35,7 @@ Item {
     var shift = (modifiers & Qt.ShiftModifier)
     var isPath = String(value).charAt(0) === "/"
     if (shift && isPath) Util.execDetached(FileModel.revealCommand(value))
-    else if (shift) Util.execArgv(["wl-copy", "--", String(value)])
+    else if (shift) copy.run(value)
     else Util.execArgv(LocationModel.openArgv(value))
   }
 
@@ -45,4 +45,6 @@ Item {
       root.results(serial, exitCode === 0 ? [LocationModel.row(path, LocationModel.kindLabel(output), false)] : [])
     }
   }
+
+  CopyRunner { id: copy }
 }

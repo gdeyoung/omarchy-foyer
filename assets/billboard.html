@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- Source for preview.png (house billboard style, 2000x1125). Render with:
+     chromium --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
+       --window-size=2000,1125 --allow-file-access-from-files \
+       --screenshot=../preview.png "file://$PWD/assets/billboard.html"
+-->
+<html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:2000px;height:1125px;overflow:hidden}
+body{background:#0d0f14;font-family:"JetBrainsMono Nerd Font","JetBrains Mono",monospace;color:#eef4f0;position:relative}
+.left{position:absolute;left:100px;top:118px;width:820px}
+.eyebrow{font-size:26px;font-weight:700;letter-spacing:6px;color:#ff9d7a}
+h1{margin-top:34px;font-family:"Inter","Geist",system-ui,sans-serif;font-size:84px;font-weight:800;letter-spacing:-2px;line-height:1.08;color:#f4f8f5}
+.para{margin-top:34px;font-size:22px;line-height:1.65;color:#a8b4ae;max-width:760px}
+.cols{margin-top:44px;display:flex;gap:70px}
+ul{list-style:none;width:360px}
+li{font-size:20px;line-height:1.5;color:#d7e2db;padding-left:30px;position:relative;margin-bottom:16px}
+li::before{content:"\25C6";position:absolute;left:0;color:#ff9d7a;font-size:14px;top:5px}
+.footer{position:absolute;left:100px;bottom:66px;width:820px}
+.footer .rule{height:1px;background:#2a2f36;margin-bottom:20px}
+.footer .row{display:flex;justify-content:space-between;font-size:18px;color:#77827c}
+.right{position:absolute;left:1040px;top:0;width:960px;height:1125px}
+.card{position:absolute;border-radius:12px;overflow:hidden;border:1px solid #2a2f36;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.card img{display:block}
+.cap{position:absolute;font-size:17px;font-weight:700;letter-spacing:3px;color:#77827c}
+.c1{left:50px;top:130px;width:640px}
+.c1 img{width:640px;height:auto}
+.c2{left:250px;top:520px;width:600px;z-index:-1}
+.c2 img{width:600px;height:auto}
+.cap1{left:50px;top:96px}
+.cap2{left:250px;top:486px}
+</style></head><body>
+<div class="left">
+ <div class="eyebrow">FOYER / GDEYOUNG</div>
+ <h1>Every search,<br>one keystroke.</h1>
+ <div class="para">Apps, windows, files, calculations with units, AI answers, snippets,
+ clipboard history, emoji, web and voice dictation &mdash; one palette of prefix
+ sources, ranked by what you actually use.</div>
+ <div class="cols">
+  <ul>
+   <li>Prefix sources: cb, ai:, =, web:, loc:</li>
+   <li>AI answers inline, key stays off argv</li>
+   <li>Clipboard history with images</li>
+   <li>Calc with units, via qalc</li>
+  </ul>
+  <ul>
+   <li>Snippets, emoji, trash, SSH hosts</li>
+   <li>Voice dictation straight into the filter</li>
+   <li>Per-source settings; follows theme accent</li>
+   <li>Drop-in replacement for omarchy.menu</li>
+  </ul>
+ </div>
+</div>
+<div class="footer">
+ <div class="rule"></div>
+ <div class="row"><span>The launcher that learns your prefixes.</span><span style="color:#ff9d7a">gdeyoung.foyer v0.4.0</span><span>gdeyoung/omarchy-foyer</span></div>
+</div>
+<div class="right">
+ <div class="cap cap1">THE PALETTE</div>
+ <div class="card c1"><img src="foyer.png"></div>
+ <div class="cap cap2">AI ANSWERS INLINE</div>
+ <div class="card c2"><img src="foyerai.png"></div>
+</div>
+</body></html>
