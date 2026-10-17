@@ -20,29 +20,26 @@ Omarchy theme with no configuration.
 
 <div align="center">
 
-<img src="assets/foyer.png" alt="Collapsed: one input line" width="640"><br>
-<sub>Collapsed: one input line</sub>
+<img src="assets/foyer.png" alt="The full Omarchy menu tree on open" width="640"><br>
+<sub>The full Omarchy menu tree, one keystroke away</sub>
 
-<img src="assets/foyeromarchy.png" alt="Results grouped by kind, with Ctrl+number quick launch" width="640"><br>
-<sub>Results grouped by kind, with Ctrl+number quick launch</sub>
+<img src="assets/foyerai.png" alt="AI answers: one concise row, Enter copies" width="640"><br>
+<sub>Ask AI anything — one concise row, Enter copies it</sub>
 
-<img src="assets/foyertest.png" alt="Menu entries and files" width="640"><br>
-<sub>Menu entries and files</sub>
+<img src="assets/foyerweb.png" alt="Web search hand-offs" width="640"><br>
+<sub>Web hand-offs: br, dd, gg, yt, wiki — plus your own prefixes</sub>
 
-<img src="assets/foyerapps.png" alt="The Apps list" width="640"><br>
-<sub>The Apps list</sub>
+<img src="assets/foyerhandoff.png" alt="A custom handoff" width="640"><br>
+<sub>Custom handoffs: gh kubernetes opens the search, defined in-launcher</sub>
 
-<img src="assets/foyercb.png" alt="Clipboard history behind the cb prefix" width="640"><br>
-<sub>Clipboard history behind the cb prefix</sub>
+<img src="assets/foyeremoji.png" alt="Emoji search" width="640"><br>
+<sub>Everyday wins: emoji, timers, brightness, volume, dates, time zones</sub>
 
-<img src="assets/foyerddgg.png" alt="Web search with dd and gg" width="640"><br>
-<sub>Web search with dd and gg</sub>
-
-<img src="assets/foyerfilter.png" alt="The Foyer Sources page" width="640"><br>
-<sub>The Foyer Sources page</sub>
+<img src="assets/foyerhelp.png" alt="The built-in help page" width="640"><br>
+<sub>A "?" away: every prefix with examples</sub>
 
 <img src="assets/foyersettings.png" alt="The Foyer Settings page" width="640"><br>
-<sub>The Foyer Settings page</sub>
+<sub>Settings inside the launcher — size, fonts, sources, AI endpoint</sub>
 
 </div>
 
