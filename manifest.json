@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "gdeyoung.foyer",
   "name": "foyer",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "gdeyoung",
   "license": "MIT",
   "description": "KRunner-style launcher for Omarchy: the full menu tree on open, live all-source search, one-row AI answers from any OpenAI-compatible endpoint, custom prefix handoffs, timers and reminders, brightness and volume, dates and time zones, emoji, snippets, SSH hosts, clipboard history and web search — with voice-friendly queries, in-launcher settings and help",

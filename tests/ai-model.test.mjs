@@ -63,3 +63,15 @@ test("thinking and error rows", () => {
   assert.equal(Ai.rowsFor("q", null, "m", "").length, 1)
   assert.equal(Ai.rowsFor("q", { error: "nope" }, "m", "")[0].label, "AI: nope")
 })
+
+test("ai-curl.conf is rewritten whenever key/endpoint/model change, not only on ready flips", async () => {
+  const { readFileSync } = await import("node:fs")
+  const qml = readFileSync("AiSource.qml", "utf8")
+  // signature over every credential-bearing field + change handler
+  assert.match(qml, /confSignature:/)
+  assert.match(qml, /config\.baseUrl.*config\.apiKey.*config\.model/s)
+  assert.match(qml, /onConfSignatureChanged: if \(root\.ready\) root\.writeConf\(\)/)
+  // the startup and ready-flip triggers remain (empty → configured)
+  assert.match(qml, /Component\.onCompleted: if \(root\.ready\) root\.writeConf\(\)/)
+  assert.match(qml, /onReadyChanged: if \(root\.ready\) root\.writeConf\(\)/)
+})

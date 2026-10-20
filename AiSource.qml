@@ -25,6 +25,13 @@ Item {
 
   Component.onCompleted: if (root.ready) root.writeConf()
   onReadyChanged: if (root.ready) root.writeConf()
+  // The curl config must track the CURRENT key/endpoint/model: replacing one
+  // provider's key with another's while every field stays nonempty keeps
+  // `ready` true, so the ready-flip alone never rewrote the Authorization
+  // header and requests left with the previous provider's key.
+  readonly property string confSignature:
+    [(config && config.baseUrl) || "", (config && config.apiKey) || "", (config && config.model) || ""].join("\u0000")
+  onConfSignatureChanged: if (root.ready) root.writeConf()
 
   function writeConf() {
     confWriter.command = ["sh", "-c",
