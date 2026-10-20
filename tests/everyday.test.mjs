@@ -143,7 +143,10 @@ test("datetime: the real date command answers (live)", async () => {
   assert.equal(DateTime.dateArgv("in 2 weeks")[2].includes("'in 2 weeks'"), false)
   const inArgv = DateTime.dateArgv("in 2 weeks")
   const later = await run(inArgv[0], inArgv.slice(1))
-  assert.match(later.stdout, /Oct 30, 2026/)
+  // expected answer is computed from today (the old hard-coded date time-bombed)
+  const plus14 = new Date(Date.now() + 14 * 86400000)
+  const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][plus14.getMonth()]
+  assert.match(later.stdout, new RegExp(`${mon}\\s+${plus14.getDate()}, ${plus14.getFullYear()}`))
 })
 
 // -- Emoji
