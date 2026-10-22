@@ -75,3 +75,23 @@ test("ai-curl.conf is rewritten whenever key/endpoint/model change, not only on 
   assert.match(qml, /Component\.onCompleted: if \(root\.ready\) root\.writeConf\(\)/)
   assert.match(qml, /onReadyChanged: if \(root\.ready\) root\.writeConf\(\)/)
 })
+
+test("ai-curl.conf writer terminates per write and serializes overlap (v0.4.2)", async () => {
+  const { readFileSync } = await import("node:fs")
+  const qml = readFileSync("AiSource.qml", "utf8")
+  // `cat > "$1"` waits for an EOF Quickshell never sends: the child stays
+  // running, `running = true` never restarts it and onStarted never refires,
+  // so the first key sticks forever (maintainer finding @5a67454). The
+  // writer must consume exactly one line and exit.
+  assert.ok(!qml.includes('cat > "$1"'), "no bare cat redirect (waits for EOF forever)")
+  assert.match(qml, /IFS= read -r line && printf/)
+  assert.match(qml, /chmod 600 "\$1"/)
+  // overlap: a write while the writer is live queues (single pending slot,
+  // newest wins) and onExited drains it — the LatestProcess idiom
+  assert.match(qml, /if \(confWriter\.running\) \{ confWriter\.queued = text; return \}/)
+  assert.match(qml, /property string queued: ""/)
+  assert.match(qml, /onExited: function\(\) \{/)
+  // header format is unchanged and the secret still rides stdin only
+  assert.match(qml, /'header = "Authorization: Bearer ' \+ root\.config\.apiKey/)
+  assert.ok(!/command[^\n]*apiKey/.test(qml), "apiKey never in the command argv")
+})

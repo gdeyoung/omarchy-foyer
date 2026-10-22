@@ -34,10 +34,22 @@ Item {
   onConfSignatureChanged: if (root.ready) root.writeConf()
 
   function writeConf() {
+    writeConfText('header = "Authorization: Bearer ' + root.config.apiKey + '"\n')
+  }
+
+  // The writer must TERMINATE per write: Quickshell never closes stdin after
+  // write(), so a child that cats stdin into the target waits for EOF
+  // forever, stays running, and every later `running = true` is a no-op
+  // (Quickshell does not restart an already-running Process) — the first key
+  // would stick forever (marketplace finding @5a67454). One `read -r line`
+  // consumes the payload and exits; the write itself is a fresh run each
+  // time.
+  function writeConfText(text) {
+    if (confWriter.running) { confWriter.queued = text; return }
     confWriter.command = ["sh", "-c",
-      'mkdir -p "$(dirname "$1")" && umask 077 && cat > "$1" && chmod 600 "$1"',
+      'mkdir -p "$(dirname "$1")" && umask 077 && IFS= read -r line && printf \'%s\\n\' "$line" > "$1" && chmod 600 "$1"',
       "sh", root.confPath]
-    confWriter.stdinData = 'header = "Authorization: Bearer ' + root.config.apiKey + '"\n'
+    confWriter.stdinData = text
     confWriter.running = true
   }
 
@@ -65,8 +77,17 @@ Item {
   Process {
     id: confWriter
     property string stdinData: ""
+    // a write that arrived while the writer was still live is drained here
+    property string queued: ""
     stdinEnabled: true
     onStarted: if (confWriter.stdinData !== "") { confWriter.write(confWriter.stdinData); confWriter.stdinData = "" }
+    onExited: function() {
+      if (confWriter.queued !== "") {
+        var q = confWriter.queued
+        confWriter.queued = ""
+        root.writeConfText(q)
+      }
+    }
     stdout: SplitParser { }
   }
 
